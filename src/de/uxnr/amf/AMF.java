@@ -39,11 +39,11 @@ public class AMF {
 		
 		U16 headers = new U16(context, input);
 		for (int index = 0; index < headers.get(); index++)
-			this.headers.add(new AMF_Header(context, input));
+			this.headers.add(new AMF_Header(input));
 		
 		U16 messages = new U16(context, input);
 		for (int index = 0; index < messages.get(); index++)
-			this.messages.add(new AMF_Message(context, input));
+			this.messages.add(new AMF_Message(input));
 	}
 	
 	public void write(OutputStream stream) throws IOException {
@@ -56,13 +56,13 @@ public class AMF {
 		U16 headers = new U16(this.headers.size());
 		headers.write(context, output);
 		for (AMF_Header header : this.headers) {
-			header.write(context, output);
+			header.write(output);
 		}
 		
 		U16 messages = new U16(this.messages.size());
 		messages.write(context, output);
 		for (AMF_Message message : this.messages) {
-			message.write(context, output);
+			message.write(output);
 		}
 	}
 	

@@ -21,21 +21,27 @@ public class AMF_Header {
 		this.headerLength = new U32(headerLength);
 	}
 	
-	public AMF_Header(AMF_Context context, DataInputStream input) throws IOException {
-		this.read(context, input);
+	public AMF_Header(DataInputStream input) throws IOException {
+		this.read(input);
 	}
 	
-	public void write(AMF_Context context, DataOutputStream output) throws IOException {
+	public void write(DataOutputStream output) throws IOException {
+		AMF_Context context = new AMF_Context();
+		
 		this.headerName.write(context, output);
 		this.mustUnderstand.write(context, output);
 		this.headerLength.write(context, output);
+		
 		AMF0_Type.writeType(context, output, this.body);
 	}
 	
-	public void read(AMF_Context context, DataInputStream input) throws IOException {
+	public void read(DataInputStream input) throws IOException {
+		AMF_Context context = new AMF_Context();
+		
 		this.headerName = new UTF8(context, input);
 		this.mustUnderstand = new U8(context, input);
 		this.headerLength = new U32(context, input);
+		
 		this.body = AMF0_Type.readType(context, input);
 	}
 	
