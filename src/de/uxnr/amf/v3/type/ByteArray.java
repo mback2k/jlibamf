@@ -41,8 +41,7 @@ public class ByteArray extends AMF3_Type {
 		this.value = new int[length];
 		
 		for (int index = 0; index < length; index++) {
-			U8 ubyte = new U8(context, input);
-			this.value[index] = ubyte.get();
+			this.value[index] = input.read();
 		}
 		
 		context.addAMF3Object(this);
