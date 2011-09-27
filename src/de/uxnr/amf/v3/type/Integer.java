@@ -7,13 +7,17 @@ import de.uxnr.amf.AMF_Context;
 import de.uxnr.amf.v3.base.U29;
 
 public class Integer extends U29 {
-	public Integer() { }
+	public Integer() {
+		this.signed = true;
+	}
 	
 	public Integer(int value) {
+		this.signed = true;
 		this.set((long) value);
 	}
 	
 	public Integer(AMF_Context context, DataInputStream input) throws IOException {
+		this.signed = true;
 		this.read(context, input);
 	}
 }

@@ -6,10 +6,13 @@ import java.io.IOException;
 
 import de.uxnr.amf.AMF_Context;
 import de.uxnr.amf.AMF_Type;
+import de.uxnr.amf.v0.base.U8;
 import de.uxnr.amf.v3.AMF3_Type;
 
 public class U29 extends AMF3_Type {
 	private long value = 0;
+	
+	public boolean signed = false;
 	
 	public U29() { }
 	
@@ -29,26 +32,34 @@ public class U29 extends AMF3_Type {
 
 	@Override
 	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
-		boolean more = false;
-		int read = 0;
+		this.value = 0;
+		int more = 0;
+		int read = new U8(context, input).get();
 		
-		for (int index = 0; index < 3; index++) {
-			read = input.read();
-			more = (read & 0x80) == 0x80;
-			
-			this.value = read & 0x7F;
-			
-			if (!more)
-				return this;
-			
+		while ((read & 0x80) != 0 && more < 3) {
 			this.value <<= 7;
+			this.value |= read & 0x7F;
+			
+			read = input.read();
+			more++;
 		}
 		
-		this.value <<= 1;
-		
-		read = input.read();
-		
-		this.value = read & 0xFF;
+		if (more < 3) {
+			this.value <<= 7;
+			this.value |= read;
+		} else {
+			this.value <<= 8;
+			this.value |= read;
+			
+	        if ((this.value & 0x10000000) != 0) {
+	        	if (this.signed) {
+	        		this.value -= 0x20000000;
+	        	} else {
+	        		this.value <<= 1;
+	        		this.value += 1;
+	        	}
+	        }
+		}
 		
 		return this;
 	}
