@@ -29,7 +29,6 @@ public class U29 extends AMF3_Type {
 
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
-		// TODO Needs to be tested
 		long value = this.value;
 		
 		if (value < MIN_VALUE)
