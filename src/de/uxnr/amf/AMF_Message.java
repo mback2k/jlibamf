@@ -82,11 +82,25 @@ public class AMF_Message {
 
 	@Override
 	public String toString() {
-		String str = "AMF_Message\n";
-		str += "\tTargetURI: "+this.targetURI+"\n";
-		str += "\tResponseURI: "+this.responseURI+"\n";
-		str += "\tMessageLength: "+this.messageLength+"\n";
-		str += this.body;
-		return str;
+		return "AMF_Message {targetURI: " + this.targetURI + ", responseURI: " + this.responseURI + ", messageLength: " + this.messageLength + "} (" + this.body + ")";
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
+
+		if (!(obj instanceof AMF_Message))
+			return false;
+
+		if (obj.hashCode() != this.hashCode())
+			return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.targetURI.hashCode() ^ this.responseURI.hashCode() ^ this.messageLength.hashCode() ^ this.body.hashCode();
 	}
 }

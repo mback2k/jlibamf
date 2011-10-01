@@ -52,4 +52,28 @@ public class AMF3_Trait {
 	public void setExternalizable(boolean externalizable) {
 		this.externalizable = externalizable;
 	}
+
+	@Override
+	public String toString() {
+		return "AMF_Trait {className: " + this.className + ", names: " + this.names + ", dynamic: " + this.dynamic + ", externalizable: " + this.externalizable + "}";
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
+
+		if (!(obj instanceof AMF3_Trait))
+			return false;
+
+		if (this.hashCode() != obj.hashCode())
+			return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.className.hashCode() ^ this.names.hashCode() ^ (this.dynamic ? 8 : 0) ^ (this.externalizable ? 4 : 0);
+	}
 }

@@ -100,11 +100,25 @@ public class AMF {
 
 	@Override
 	public String toString() {
-		String str = "AMF\n";
-		str += "\tHeaders: "+this.headers.size()+"\n";
-		str += this.headers;
-		str += "\tMessages: "+this.messages.size()+"\n";
-		str += this.messages;
-		return str;
+		return "AMF {headers: " + this.headers + ", messages: " + this.messages + "}";
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
+
+		if (!(obj instanceof AMF))
+			return false;
+
+		if (obj.hashCode() != this.hashCode())
+			return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.headers.hashCode() ^ this.messages.hashCode();
 	}
 }

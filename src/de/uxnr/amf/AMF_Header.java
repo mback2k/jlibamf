@@ -87,11 +87,25 @@ public class AMF_Header {
 
 	@Override
 	public String toString() {
-		String str = "AMF_Header\n";
-		str += "\tHeaderName: "+this.headerName+"\n";
-		str += "\tMustUnderstand: "+this.mustUnderstand+"\n";
-		str += "\tHeaderLength: "+this.headerLength+"\n";
-		str += this.body;
-		return str;
+		return "AMF_Header {headerName: " + this.headerName + ", mustUnderstand: " + this.mustUnderstand + ", headerLength: " + this.headerLength + "} (" + this.body + ")";
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
+
+		if (!(obj instanceof AMF_Header))
+			return false;
+
+		if (obj.hashCode() != this.hashCode())
+			return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.headerName.hashCode() ^ this.mustUnderstand.hashCode() ^ this.headerLength.hashCode() ^ this.body.hashCode();
 	}
 }
