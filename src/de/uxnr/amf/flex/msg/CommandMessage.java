@@ -17,8 +17,9 @@ public class CommandMessage extends AsyncMessage {
 
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
-		// TODO Auto-generated method stub
-		
+		super.write(context, output);
+
+		this.writeFields(context, output, CommandMessage.names);
 	}
 
 	@Override

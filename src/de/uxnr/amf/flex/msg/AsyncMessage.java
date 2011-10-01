@@ -18,8 +18,9 @@ public class AsyncMessage extends AbstractMessage {
 
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
-		// TODO Auto-generated method stub
-		
+		super.write(context, output);
+
+		this.writeFields(context, output, AsyncMessage.names);
 	}
 
 	@Override

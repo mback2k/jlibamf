@@ -32,8 +32,7 @@ public abstract class AbstractMessage extends Object {
 
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
-		// TODO Auto-generated method stub
-		
+		this.writeFields(context, output, AbstractMessage.names);
 	}
 
 	@Override
@@ -41,6 +40,43 @@ public abstract class AbstractMessage extends Object {
 		this.readFields(context, input, AbstractMessage.names);
 
 		return this;
+	}
+
+	protected void writeFields(AMF_Context context, DataOutputStream output, UTF8[][] names) throws IOException {
+		List<AMF3_Type> values = new Vector<AMF3_Type>();
+		List<Integer> flags = new Vector<Integer>();
+
+		for (UTF8[] name : names) {
+			int flag = 0;
+
+			for (int index = 0; index < name.length; index++) {
+				AMF3_Type value = this.get(name[index]);
+
+				if (value != null) {
+					values.add(value);
+				}
+			}
+
+			for (int index = name.length - 1; index >= 0; index--) {
+				AMF3_Type value = this.get(name[index]);
+
+				if (value != null) {
+					flag = (flag << 1) | 1;
+				}
+			}
+
+			flags.add(flag);
+		}
+
+		if (flags.isEmpty()) {
+			flags.add(0x00);
+		}
+
+		this.writeFlags(context, output, flags);
+
+		for (AMF3_Type value : values) {
+			AMF3_Type.writeType(context, output, value);
+		}
 	}
 
 	protected void readFields(AMF_Context context, DataInputStream input, UTF8[][] names) throws IOException {
@@ -57,6 +93,18 @@ public abstract class AbstractMessage extends Object {
 					}
 				}
 			}
+		}
+	}
+
+	private void writeFlags(AMF_Context context, DataOutputStream output, List<Integer> flags) throws IOException {
+		U8 ubyte = new U8(0x00);
+		for (int index = 0; index < flags.size(); index++) {
+			if (index == flags.size() - 1) {
+				ubyte = new U8(flags.get(index));
+			} else {
+				ubyte = new U8(flags.get(index) | 0x80);
+			}
+			ubyte.write(context, output);
 		}
 	}
 
