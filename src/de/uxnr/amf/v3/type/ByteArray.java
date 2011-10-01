@@ -12,9 +12,9 @@ import de.uxnr.amf.v3.base.U29;
 
 public class ByteArray extends AMF3_Type {
 	private int[] value = new int[0];
-	
+
 	public ByteArray() { }
-	
+
 	public ByteArray(int[] value) {
 		this.value = value;
 	}
@@ -23,7 +23,7 @@ public class ByteArray extends AMF3_Type {
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
 		U29 length = new U29((this.value.length << 1) | 1);
 		length.write(context, output);
-		
+
 		for (int elem : this.value) {
 			U8 ubyte = new U8(elem);
 			ubyte.write(context, output);
@@ -33,19 +33,19 @@ public class ByteArray extends AMF3_Type {
 	@Override
 	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
 		U29 flag = new U29(context, input);
-		
+
 		if ((flag.get() & 1) == 0)
 			return context.getAMF3Object(flag.get() >> 1);
-		
+
 		int length = (int) (flag.get() >> 1);
 		this.value = new int[length];
-		
+
 		for (int index = 0; index < length; index++) {
 			this.value[index] = input.read();
 		}
-		
+
 		context.addAMF3Object(this);
-		
+
 		return this;
 	}
 
@@ -56,14 +56,17 @@ public class ByteArray extends AMF3_Type {
 	public int[] get() {
 		return this.value;
 	}
-	
+
 	@Override
 	public java.lang.String toString() {
 		return "ByteArray";
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return this.get().hashCode();
+		int hashCode = 0;
+		for (int value : this.value)
+			hashCode ^= value;
+		return hashCode;
 	}
 }

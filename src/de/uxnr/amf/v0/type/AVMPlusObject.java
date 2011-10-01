@@ -31,4 +31,14 @@ public class AVMPlusObject extends AMF0_Type {
 	public AMF3_Type get() {
 		return this.value;
 	}
+
+	@Override
+	public java.lang.String toString() {
+		return "AVMPlusObject(" + this.value + ")";
+	}
+
+	@Override
+	public int hashCode() {
+		return this.value.hashCode();
+	}
 }

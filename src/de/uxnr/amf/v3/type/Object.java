@@ -146,15 +146,18 @@ public class Object extends AMF3_Type {
 
 	@Override
 	public java.lang.String toString() {
-		java.lang.String str = "Object";
-		for (Entry<UTF8, AMF3_Type> entry : this.value.entrySet()) {
-			str += "\n"+entry.getKey().toString()+": "+entry.getValue().toString();
-		}
-		return str;
+		if (this.external != null)
+			return "External " + this.external;
+		return "Object " + this.value;
 	}
 
 	@Override
 	public int hashCode() {
-		return this.value.hashCode();
+		int hashCode = this.value.hashCode();
+		if (this.trait != null)
+			hashCode ^= this.trait.hashCode();
+		if (this.external != null)
+			hashCode ^= this.external.hashCode();
+		return hashCode;
 	}
 }

@@ -8,17 +8,12 @@ import de.uxnr.amf.v0.base.UTF8long;
 
 public class LongString extends UTF8long {
 	public LongString() { }
-	
+
 	public LongString(java.lang.String value) {
 		this.set(value);
 	}
-	
+
 	public LongString(AMF_Context context, DataInputStream input) throws IOException {
 		this.read(context, input);
-	}
-	
-	@Override
-	public int hashCode() {
-		return this.get().hashCode();
 	}
 }

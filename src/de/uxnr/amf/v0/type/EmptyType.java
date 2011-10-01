@@ -13,10 +13,15 @@ public abstract class EmptyType extends AMF0_Type {
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
 		// Nothing to do here
 	}
-	
+
 	@Override
 	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
 		// Nothing to do here
 		return this;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.getClass().hashCode();
 	}
 }

@@ -19,4 +19,9 @@ public abstract class EmptyType extends AMF3_Type {
 		// Nothing to do here
 		return this;
 	}
+
+	@Override
+	public int hashCode() {
+		return this.getClass().hashCode();
+	}
 }

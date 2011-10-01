@@ -13,10 +13,10 @@ import de.uxnr.amf.v0.base.U32;
 import de.uxnr.amf.v0.base.UTF8;
 
 public class ECMAArray extends AMF0_Type {
-	private Map<UTF8, AMF0_Type> value = new HashMap<UTF8, AMF0_Type>();
-	
+	private final Map<UTF8, AMF0_Type> value = new HashMap<UTF8, AMF0_Type>();
+
 	public ECMAArray() { }
-	
+
 	public ECMAArray(AMF_Context context, DataInputStream input) throws IOException {
 		this.read(context, input);
 	}
@@ -25,7 +25,7 @@ public class ECMAArray extends AMF0_Type {
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
 		U32 length = new U32(this.value.size());
 		length.write(context, output);
-		
+
 		for (Entry<UTF8, AMF0_Type> entry : this.value.entrySet()) {
 			entry.getKey().write(context, output);
 			AMF0_Type.writeType(context, output, entry.getValue());
@@ -35,40 +35,36 @@ public class ECMAArray extends AMF0_Type {
 	@Override
 	public AMF0_Type read(AMF_Context context, DataInputStream input) throws IOException {
 		U32 length = new U32(context, input);
-		
+
 		for (long index = 0; index < length.get(); index++) {
 			UTF8 key = new UTF8(context, input);
 			AMF0_Type value = AMF0_Type.readType(context, input);
-			
+
 			this.value.put(key, value);
 		}
-		
+
 		context.addAMF0Object(this);
-		
+
 		return this;
 	}
-	
+
 	public Map<UTF8, AMF0_Type> get() {
 		return this.value;
 	}
-	
+
 	public void set(UTF8 key, AMF0_Type value) {
 		this.value.put(key, value);
 	}
-	
+
 	public AMF0_Type get(UTF8 key) {
 		return this.value.get(key);
 	}
-	
+
 	@Override
 	public java.lang.String toString() {
-		java.lang.String str = "ECMA Array";
-		for (Entry<UTF8, AMF0_Type> entry : this.value.entrySet()) {
-			str += "\n"+entry.getKey().toString()+": "+entry.getValue().toString();
-		}
-		return str;
+		return "ECMA Array " + this.value;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return this.value.hashCode();
