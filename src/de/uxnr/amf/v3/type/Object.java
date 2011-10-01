@@ -32,7 +32,8 @@ public class Object extends AMF3_Type {
 		U29 flag = new U29(flags);
 		flag.write(context, output);
 
-		this.trait.getClassName().write(context, output);
+		UTF8 className = this.trait.getClassName();
+		className.write(context, output);
 
 		List<UTF8> names = this.trait.getNames();
 		for (UTF8 name : names) {
@@ -40,7 +41,7 @@ public class Object extends AMF3_Type {
 		}
 
 		if (this.trait.isExternalizable()) {
-			Flex.writeMessage(context, output, this.external);
+			Flex.writeMessage(context, output, className, this.external);
 		} else {
 			for (UTF8 name : names) {
 				AMF3_Type.writeType(context, output, this.value.get(name));
@@ -89,8 +90,6 @@ public class Object extends AMF3_Type {
 
 		if (this.trait.isExternalizable()) {
 			this.external = Flex.readMessage(context, input, this.trait.getClassName());
-
-			return this.external;
 		} else {
 			for (UTF8 name : this.trait.getNames()) {
 				AMF3_Type value = AMF3_Type.readType(context, input);
