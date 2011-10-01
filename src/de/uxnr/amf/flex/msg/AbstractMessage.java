@@ -29,7 +29,7 @@ public abstract class AbstractMessage extends Object {
 			new UTF8("messageId"),
 		}
 	};
-	
+
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
 		// TODO Auto-generated method stub
@@ -38,23 +38,29 @@ public abstract class AbstractMessage extends Object {
 
 	@Override
 	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
+		this.readFields(context, input, AbstractMessage.names);
+
+		return this;
+	}
+
+	protected void readFields(AMF_Context context, DataInputStream input, UTF8[][] names) throws IOException {
 		List<Integer> flags = this.readFlags(context, input);
-		
+
 		int index = 0;
-		for (Integer flag : flags) {
+		for (int flag : flags) {
 			int reserved = 0;
-			
-			for (UTF8 name : AbstractMessage.names[index++]) {
-				if (((flag >> (reserved++)) & 1) == 1) {
-					this.set(name, AMF3_Type.readType(context, input), true);
+
+			if (index < names.length) {
+				for (UTF8 name : names[index++]) {
+					if (((flag >> (reserved++)) & 1) == 1) {
+						this.set(name, AMF3_Type.readType(context, input), true);
+					}
 				}
 			}
 		}
-		
-		return this;
 	}
-	
-	protected List<Integer> readFlags(AMF_Context context, DataInputStream input) throws IOException {
+
+	private List<Integer> readFlags(AMF_Context context, DataInputStream input) throws IOException {
 		List<Integer> flags = new Vector<Integer>();
 		U8 ubyte = new U8(0x80);
 		do {
