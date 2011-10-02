@@ -14,16 +14,16 @@ public class AMF_Context {
 	private final List<AMF3_Trait> amf3trait = new Vector<AMF3_Trait>();
 	private final List<UTF8> amf3strings = new Vector<UTF8>();
 
-	public long addAMF0Object(AMF0_Type value) {
+	public int addAMF0Object(AMF0_Type value) {
 		this.amf0objects.add(value);
 		return this.amf0objects.indexOf(value);
 	}
 
-	public AMF0_Type getAMF0Object(long index) {
-		return this.amf0objects.get((int) index);
+	public AMF0_Type getAMF0Object(int index) {
+		return this.amf0objects.get(index);
 	}
 
-	public long getAMF0ObjectReference(AMF0_Type value) {
+	public int getAMF0ObjectReference(AMF0_Type value) {
 		return this.amf0objects.indexOf(value);
 	}
 

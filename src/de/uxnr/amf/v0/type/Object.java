@@ -32,6 +32,8 @@ public class Object extends AMF0_Type {
 
 		Object.EMPTY_KEY.write(context, output);
 		AMF0_Type.writeType(context, output, new ObjectEnd());
+
+		context.addAMF0Object(this);
 	}
 
 	@Override

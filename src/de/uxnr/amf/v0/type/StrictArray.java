@@ -28,6 +28,8 @@ public class StrictArray extends AMF0_Type {
 		for (AMF0_Type value : this.value) {
 			AMF0_Type.writeType(context, output, value);
 		}
+
+		context.addAMF0Object(this);
 	}
 
 	@Override

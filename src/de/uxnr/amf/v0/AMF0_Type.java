@@ -9,6 +9,7 @@ import java.util.Map;
 import de.uxnr.amf.AMF_Context;
 import de.uxnr.amf.AMF_Type;
 import de.uxnr.amf.v0.base.U8;
+import de.uxnr.amf.v0.type.Reference;
 
 @SuppressWarnings("rawtypes")
 abstract public class AMF0_Type implements AMF_Type {
@@ -21,8 +22,13 @@ abstract public class AMF0_Type implements AMF_Type {
 	}
 
 	public static void writeType(AMF_Context context, DataOutputStream output, AMF0_Type value) throws IOException {
-		AMF0_Type.classes.get(value.getClass()).write(context, output);
-		value.write(context, output);
+		if (context.getAMF0ObjectReference(value) == -1) {
+			AMF0_Type.classes.get(value.getClass()).write(context, output);
+			value.write(context, output);
+		} else {
+			Reference reference = new Reference(value);
+			AMF0_Type.writeType(context, output, reference);
+		}
 	}
 
 	public static AMF0_Type readType(AMF_Context context, DataInputStream input) throws IOException {

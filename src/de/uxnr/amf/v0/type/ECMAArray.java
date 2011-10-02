@@ -30,6 +30,8 @@ public class ECMAArray extends AMF0_Type {
 			entry.getKey().write(context, output);
 			AMF0_Type.writeType(context, output, entry.getValue());
 		}
+
+		context.addAMF0Object(this);
 	}
 
 	@Override
