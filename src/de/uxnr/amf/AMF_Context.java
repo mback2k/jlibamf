@@ -27,33 +27,33 @@ public class AMF_Context {
 		return this.amf0objects.indexOf(value);
 	}
 
-	public long addAMF3Object(AMF3_Type value) {
+	public int addAMF3Object(AMF3_Type value) {
 		this.amf3objects.add(value);
 		return this.amf3objects.indexOf(value);
 	}
 
-	public AMF3_Type getAMF3Object(long index) {
-		return this.amf3objects.get((int) index);
+	public AMF3_Type getAMF3Object(int index) {
+		return this.amf3objects.get(index);
 	}
 
-	public long getAMF3ObjectReference(AMF3_Type value) {
+	public int getAMF3ObjectReference(AMF3_Type value) {
 		return this.amf3objects.indexOf(value);
 	}
 
-	public long addAMF3Trait(AMF3_Trait value) {
+	public int addAMF3Trait(AMF3_Trait value) {
 		this.amf3trait.add(value);
 		return this.amf3trait.indexOf(value);
 	}
 
-	public AMF3_Trait getAMF3Trait(long index) {
-		return this.amf3trait.get((int) index);
+	public AMF3_Trait getAMF3Trait(int index) {
+		return this.amf3trait.get(index);
 	}
 
-	public long getAMF3TraitReference(AMF3_Trait value) {
+	public int getAMF3TraitReference(AMF3_Trait value) {
 		return this.amf3trait.indexOf(value);
 	}
 
-	public long addAMF3String(UTF8 value) {
+	public int addAMF3String(UTF8 value) {
 		this.amf3strings.add(value);
 		return this.amf3strings.indexOf(value);
 	}

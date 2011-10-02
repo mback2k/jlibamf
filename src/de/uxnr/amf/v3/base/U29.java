@@ -99,7 +99,7 @@ public class U29 extends AMF3_Type {
 		this.value = value;
 	}
 
-	public long get() {
+	public int get() {
 		return this.value;
 	}
 

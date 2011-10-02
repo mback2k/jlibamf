@@ -63,7 +63,7 @@ public class Object extends AMF3_Type {
 	@Override
 	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
 		U29 flag = new U29(context, input);
-		long flags = flag.get();
+		int flags = flag.get();
 
 		if ((flags & 1) == 0)
 			return context.getAMF3Object(flags >> 1);
