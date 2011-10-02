@@ -61,6 +61,7 @@ public class AMFTest {
 		System.out.println(input.available());
 
 		AMF amf = new AMF(input);
+		int hashCode = amf.hashCode();
 
 		System.out.println(amf.getHeaders().size());
 		System.out.println(amf.getMessages().size());
@@ -79,5 +80,10 @@ public class AMFTest {
 		FileInputStream in = new FileInputStream(file);
 
 		amf = new AMF(in);
+
+		System.out.println(hashCode+" == "+amf.hashCode());
+
+		if (hashCode != amf.hashCode())
+			throw new RuntimeException("Test failed!");
 	}
 }
