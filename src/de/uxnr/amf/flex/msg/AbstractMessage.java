@@ -25,8 +25,8 @@ public abstract class AbstractMessage extends Object {
 			new UTF8("timeToLive"),
 		},
 		{
-			new UTF8("clientId"),
-			new UTF8("messageId"),
+			new UTF8("clientUuid"),
+			new UTF8("messageUuid"),
 		}
 	};
 

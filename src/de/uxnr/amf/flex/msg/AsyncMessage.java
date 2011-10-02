@@ -12,7 +12,7 @@ public class AsyncMessage extends AbstractMessage {
 	private static final UTF8[][] names = new UTF8[][] {
 		{
 			new UTF8("correlationId"),
-			new UTF8("correlationId"),
+			new UTF8("correlationUuid"),
 		}
 	};
 
