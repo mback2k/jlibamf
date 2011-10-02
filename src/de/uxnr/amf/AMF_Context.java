@@ -58,11 +58,11 @@ public class AMF_Context {
 		return this.amf3strings.indexOf(value);
 	}
 
-	public UTF8 getAMF3String(long index) {
-		return this.amf3strings.get((int) index);
+	public UTF8 getAMF3String(int index) {
+		return this.amf3strings.get(index);
 	}
 
-	public long getAMF3StringReference(UTF8 value) {
+	public int getAMF3StringReference(UTF8 value) {
 		return this.amf3strings.indexOf(value);
 	}
 }

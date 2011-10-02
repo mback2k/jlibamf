@@ -25,6 +25,13 @@ public class UTF8 extends AMF3_Type {
 
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
+		int reference = context.getAMF3StringReference(this);
+		if (reference >= 0) {
+			U29 flag = new U29(reference << 1);
+			flag.write(context, output);
+			return;
+		}
+
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		OutputStreamWriter writer = new OutputStreamWriter(stream, "UTF-8");
 		writer.write(this.value);
@@ -37,6 +44,8 @@ public class UTF8 extends AMF3_Type {
 		writer = new OutputStreamWriter(output, "UTF-8");
 		writer.write(this.value);
 		writer.flush();
+
+		context.addAMF3String(this);
 	}
 
 	@Override
@@ -48,7 +57,7 @@ public class UTF8 extends AMF3_Type {
 		if ((flag.get() & 1) == 0)
 			return context.getAMF3String(flag.get() >> 1);
 
-		int length = (int) (flag.get() >> 1);
+		int length = (flag.get() >> 1);
 		byte[] buf = new byte[length];
 
 		if (input.read(buf) == length)
