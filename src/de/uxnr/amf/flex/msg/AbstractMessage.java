@@ -60,8 +60,9 @@ public abstract class AbstractMessage extends Object {
 			for (int index = name.length - 1; index >= 0; index--) {
 				AMF3_Type value = this.get(name[index]);
 
+				flag <<= 1;
 				if (value != null) {
-					flag = (flag << 1) | 1;
+					flag |= 1;
 				}
 			}
 
