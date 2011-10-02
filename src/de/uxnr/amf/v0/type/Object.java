@@ -3,7 +3,7 @@ package de.uxnr.amf.v0.type;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -15,7 +15,7 @@ import de.uxnr.amf.v0.base.UTF8;
 public class Object extends AMF0_Type {
 	private static final UTF8 EMPTY_KEY = new UTF8();
 
-	private final Map<UTF8, AMF0_Type> value = new HashMap<UTF8, AMF0_Type>();
+	private final Map<UTF8, AMF0_Type> value = new LinkedHashMap<UTF8, AMF0_Type>();
 
 	public Object() { }
 

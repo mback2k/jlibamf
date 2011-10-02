@@ -3,7 +3,7 @@ package de.uxnr.amf.v3.type;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -18,7 +18,7 @@ import de.uxnr.amf.v3.base.UTF8;
 public class Array extends AMF3_Type {
 	private static final UTF8 EMPTY_KEY = new UTF8();
 
-	private final Map<UTF8, AMF3_Type> value1 = new HashMap<UTF8, AMF3_Type>();
+	private final Map<UTF8, AMF3_Type> value1 = new LinkedHashMap<UTF8, AMF3_Type>();
 	private final List<AMF3_Type> value2 = new Vector<AMF3_Type>();
 
 	@Override
