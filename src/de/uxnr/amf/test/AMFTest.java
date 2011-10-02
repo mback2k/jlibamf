@@ -17,12 +17,12 @@ import de.uxnr.amf.v3.type.Integer;
 public class AMFTest {
 	public static void main(String[] args) throws IOException {
 		for (int i = 0; i < 1000; i++) {
-			long value = (long) (Integer.MAX_VALUE - (Math.random() * Integer.MAX_VALUE * 2));
+			int value = (int) (Integer.MAX_VALUE - (Math.random() * Integer.MAX_VALUE * 2));
 			test(value, true);
 		}
 
 		for (int i = 0; i < 1000; i++) {
-			long value = (long) (Math.random() * U29.MAX_VALUE);
+			int value = (int) (Math.random() * U29.MAX_VALUE);
 			test(value, false);
 		}
 
@@ -34,7 +34,7 @@ public class AMFTest {
 		}
 	}
 
-	public static void test(long value, boolean signed) throws IOException {
+	public static void test(int value, boolean signed) throws IOException {
 		AMF_Context context = new AMF_Context();
 		Integer test = new Integer();
 		test.signed = signed;

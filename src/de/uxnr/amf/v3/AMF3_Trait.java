@@ -33,7 +33,7 @@ public class AMF3_Trait {
 		this.className = className;
 	}
 
-	public long getCount() {
+	public int getCount() {
 		return this.names.size();
 	}
 

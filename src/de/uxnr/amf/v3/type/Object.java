@@ -26,7 +26,7 @@ public class Object extends AMF3_Type {
 
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
-		long flags = this.trait.getCount() << 4;
+		int flags = this.trait.getCount() << 4;
 		flags |= 1 | 2 | (this.trait.isExternalizable() ? 4 : 0) | (this.trait.isDynamic() ? 8 : 0);
 
 		U29 flag = new U29(flags);
