@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.Vector;
 
 import de.uxnr.amf.AMF_Context;
@@ -20,6 +21,8 @@ public class Array extends AMF3_Type {
 
 	private final Map<UTF8, AMF3_Type> value1 = new LinkedHashMap<UTF8, AMF3_Type>();
 	private final List<AMF3_Type> value2 = new Vector<AMF3_Type>();
+
+	private java.lang.Integer hashCode = null;
 
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
@@ -71,12 +74,21 @@ public class Array extends AMF3_Type {
 		return this;
 	}
 
-	public Map<UTF8, AMF3_Type> get() {
-		return this.value1;
+	public Set<UTF8> keySet() {
+		return this.value1.keySet();
+	}
+
+	public Set<Entry<UTF8, AMF3_Type>> entrySet() {
+		return this.value1.entrySet();
+	}
+
+	public void put(UTF8 key, AMF3_Type value) {
+		this.hashCode = null;
+		this.value1.put(key, value);
 	}
 
 	public void set(UTF8 key, AMF3_Type value) {
-		this.value1.put(key, value);
+		this.put(key, value);
 	}
 
 	public AMF3_Type get(UTF8 key) {
@@ -84,6 +96,7 @@ public class Array extends AMF3_Type {
 	}
 
 	public void set(int index, AMF3_Type value) {
+		this.hashCode = null;
 		this.value2.set(index, value);
 	}
 
@@ -98,6 +111,8 @@ public class Array extends AMF3_Type {
 
 	@Override
 	public int hashCode() {
-		return this.value1.hashCode() ^ this.value2.hashCode();
+		if (this.hashCode != null)
+			return this.hashCode;
+		return this.hashCode = this.value1.hashCode() ^ this.value2.hashCode();
 	}
 }

@@ -3,6 +3,7 @@ package de.uxnr.amf.v0.type;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -13,6 +14,8 @@ import de.uxnr.amf.v0.base.U32;
 
 public class StrictArray extends AMF0_Type {
 	private final List<AMF0_Type> value = new Vector<AMF0_Type>();
+
+	private Integer hashCode = null;
 
 	public StrictArray() { }
 
@@ -47,15 +50,17 @@ public class StrictArray extends AMF0_Type {
 		return this;
 	}
 
-	public List<AMF0_Type> get() {
-		return this.value;
+	public Iterator<AMF0_Type> iterator() {
+		return this.value.iterator();
 	}
 
 	public void add(AMF0_Type value) {
+		this.hashCode = null;
 		this.value.add(value);
 	}
 
 	public void set(int index, AMF0_Type value) {
+		this.hashCode = null;
 		this.value.set(index, value);
 	}
 
@@ -70,6 +75,8 @@ public class StrictArray extends AMF0_Type {
 
 	@Override
 	public int hashCode() {
-		return this.value.hashCode();
+		if (this.hashCode != null)
+			return this.hashCode;
+		return this.hashCode = this.value.hashCode();
 	}
 }

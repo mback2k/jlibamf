@@ -13,6 +13,8 @@ import de.uxnr.amf.v3.base.U29;
 public class ByteArray extends AMF3_Type {
 	private int[] value = new int[0];
 
+	private java.lang.Integer hashCode = null;
+
 	public ByteArray() { }
 
 	public ByteArray(int[] value) {
@@ -37,7 +39,7 @@ public class ByteArray extends AMF3_Type {
 		if ((flag.get() & 1) == 0)
 			return context.getAMF3Object(flag.get() >> 1);
 
-		int length = (int) (flag.get() >> 1);
+		int length = (flag.get() >> 1);
 		this.value = new int[length];
 
 		for (int index = 0; index < length; index++) {
@@ -50,6 +52,7 @@ public class ByteArray extends AMF3_Type {
 	}
 
 	public void set(int[] value) {
+		this.hashCode = null;
 		this.value = value;
 	}
 
@@ -64,9 +67,11 @@ public class ByteArray extends AMF3_Type {
 
 	@Override
 	public int hashCode() {
-		int hashCode = 0;
+		if (this.hashCode != null)
+			return this.hashCode;
+		this.hashCode = 0;
 		for (int value : this.value)
-			hashCode ^= value;
-		return hashCode;
+			this.hashCode ^= value;
+		return this.hashCode;
 	}
 }

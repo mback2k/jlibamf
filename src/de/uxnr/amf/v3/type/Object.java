@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import de.uxnr.amf.AMF_Context;
 import de.uxnr.amf.AMF_Type;
@@ -23,6 +24,14 @@ public class Object extends AMF3_Type {
 
 	private AMF3_Trait trait = null;
 	private AMF3_Type external = null;
+
+	private java.lang.Integer hashCode = null;
+
+	public Object() { }
+
+	public Object(AMF3_Type external) {
+		this.external = external;
+	}
 
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
@@ -117,15 +126,28 @@ public class Object extends AMF3_Type {
 		return this;
 	}
 
-	public Map<UTF8, AMF3_Type> get() {
-		return this.value;
+	public Set<UTF8> keySet() {
+		return this.value.keySet();
+	}
+
+	public Set<Entry<UTF8, AMF3_Type>> entrySet() {
+		return this.value.entrySet();
+	}
+
+	public void put(UTF8 key, AMF3_Type value) {
+		this.hashCode = null;
+		this.value.put(key, value);
+	}
+
+	public void set(UTF8 key, AMF3_Type value) {
+		this.put(key, value);
 	}
 
 	public void set(UTF8 key, AMF3_Type value, boolean dynamic) {
 		if (!dynamic && !this.trait.hasName(key))
 			this.trait.addName(key);
 
-		this.value.put(key, value);
+		this.put(key, value);
 	}
 
 	public AMF3_Type get(UTF8 key) {
@@ -140,10 +162,6 @@ public class Object extends AMF3_Type {
 		return this.external;
 	}
 
-	public void setExternal(AMF3_Type external) {
-		this.external = external;
-	}
-
 	@Override
 	public java.lang.String toString() {
 		if (this.external != null)
@@ -153,11 +171,13 @@ public class Object extends AMF3_Type {
 
 	@Override
 	public int hashCode() {
-		int hashCode = this.value.hashCode();
+		if (this.hashCode != null)
+			return this.hashCode;
+		this.hashCode = this.value.hashCode();
 		if (this.trait != null)
-			hashCode ^= this.trait.hashCode();
+			this.hashCode ^= this.trait.hashCode();
 		if (this.external != null)
-			hashCode ^= this.external.hashCode();
-		return hashCode;
+			this.hashCode ^= this.external.hashCode();
+		return this.hashCode;
 	}
 }
