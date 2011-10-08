@@ -26,6 +26,15 @@ public class Array extends AMF3_Type {
 
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
+		int reference = context.getAMF3ObjectReference(this);
+		if (reference >= 0) {
+			U29 flag = new U29((reference << 1) & ~1);
+			flag.write(context, output);
+			return;
+		}
+
+		context.addAMF3Object(this);
+
 		U29 length = new U29((this.value2.size() << 1) | 1);
 		length.write(context, output);
 
@@ -44,9 +53,10 @@ public class Array extends AMF3_Type {
 	@Override
 	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
 		U29 flag = new U29(context, input);
+		int flags = flag.get();
 
-		if ((flag.get() & 1) == 0)
-			return context.getAMF3Object(flag.get() >> 1);
+		if ((flags & 1) == 0)
+			return context.getAMF3Object(flags >> 1);
 
 		context.addAMF3Object(this);
 
@@ -65,12 +75,14 @@ public class Array extends AMF3_Type {
 			}
 		} while (key != null && value != null);
 
-		long length = flag.get() >> 1;
-		for (long index = 0; index < length; index++) {
+		int length = (flags >> 1);
+		for (int index = 0; index < length; index++) {
 			value = AMF3_Type.readType(context, input);
 
 			this.value2.add(value);
 		}
+
+		this.hashCode = null;
 
 		return this;
 	}

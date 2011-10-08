@@ -18,6 +18,15 @@ public class Date extends DOUBLE {
 
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
+		int reference = context.getAMF3ObjectReference(this);
+		if (reference >= 0) {
+			U29 flag = new U29((reference << 1) & ~1);
+			flag.write(context, output);
+			return;
+		}
+
+		context.addAMF3Object(this);
+
 		U29 flag = new U29(1);
 		flag.write(context, output);
 
@@ -31,9 +40,9 @@ public class Date extends DOUBLE {
 		if ((flag.get() & 1) == 0)
 			return context.getAMF3Object(flag.get() >> 1);
 
-		super.read(context, input);
-
 		context.addAMF3Object(this);
+
+		super.read(context, input);
 
 		return this;
 	}

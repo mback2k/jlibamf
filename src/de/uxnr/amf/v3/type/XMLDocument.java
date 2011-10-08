@@ -28,6 +28,15 @@ public class XMLDocument extends UTF8 {
 
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
+		int reference = context.getAMF3ObjectReference(this);
+		if (reference >= 0) {
+			U29 flag = new U29((reference << 1) & ~1);
+			flag.write(context, output);
+			return;
+		}
+
+		context.addAMF3Object(this);
+
 		try {
 			StringWriter writer = new StringWriter();
 			StreamResult result = new StreamResult(writer);
@@ -52,7 +61,9 @@ public class XMLDocument extends UTF8 {
 		if ((flag.get() & 1) == 0)
 			return context.getAMF3Object(flag.get() >> 1);
 
-		int length = (int) (flag.get() >> 1);
+		context.addAMF3Object(this);
+
+		int length = (flag.get() >> 1);
 		byte[] buf = new byte[length];
 
 		if (input.read(buf) == length) {
@@ -73,8 +84,6 @@ public class XMLDocument extends UTF8 {
 		} else {
 			throw new IOException("Not enough data to read XMLDocument");
 		}
-
-		context.addAMF3Object(this);
 
 		return this;
 	}

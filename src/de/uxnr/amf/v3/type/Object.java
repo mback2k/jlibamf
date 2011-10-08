@@ -40,18 +40,37 @@ public class Object extends AMF3_Type {
 
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
-		int flags = this.trait.getCount() << 4;
-		flags |= 1 | 2 | (this.trait.isExternalizable() ? 4 : 0) | (this.trait.isDynamic() ? 8 : 0);
+		int reference = context.getAMF3ObjectReference(this);
+		if (reference >= 0) {
+			U29 flag = new U29((reference << 1) & ~1);
+			flag.write(context, output);
+			return;
+		}
 
-		U29 flag = new U29(flags);
-		flag.write(context, output);
+		context.addAMF3Object(this);
 
 		UTF8 className = this.trait.getClassName();
-		className.write(context, output);
-
 		List<UTF8> names = this.trait.getNames();
-		for (UTF8 name : names) {
-			name.write(context, output);
+
+		reference = context.getAMF3TraitReference(this.trait);
+		if (reference >= 0) {
+			U29 flag = new U29((reference << 2) & ~2 | 1);
+			flag.write(context, output);
+
+		} else {
+			int flags = this.trait.getCount() << 4;
+			flags |= 1 | 2 | (this.trait.isExternalizable() ? 4 : 0) | (this.trait.isDynamic() ? 8 : 0);
+
+			U29 flag = new U29(flags);
+			flag.write(context, output);
+
+			className.write(context, output);
+
+			for (UTF8 name : names) {
+				name.write(context, output);
+			}
+
+			context.addAMF3Trait(this.trait);
 		}
 
 		if (this.trait.isExternalizable()) {
@@ -116,6 +135,8 @@ public class Object extends AMF3_Type {
 			className = this.trait.getClassName();
 		}
 
+		context.addAMF3Object(this);
+
 		if (this.trait.isExternalizable()) {
 			if (Object.externalClasses.containsKey(className)) {
 				try {
@@ -131,6 +152,8 @@ public class Object extends AMF3_Type {
 			} else {
 				throw new RuntimeException("Unsupported message/class "+className);
 			}
+
+			this.hashCode = null;
 
 			return this;
 		} else {
@@ -158,7 +181,7 @@ public class Object extends AMF3_Type {
 			}
 		}
 
-		context.addAMF3Object(this);
+		this.hashCode = null;
 
 		return this;
 	}
