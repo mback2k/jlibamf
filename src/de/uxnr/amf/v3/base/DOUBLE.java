@@ -9,14 +9,14 @@ import de.uxnr.amf.AMF_Type;
 import de.uxnr.amf.v3.AMF3_Type;
 
 public class DOUBLE extends AMF3_Type {
-	private double value = 0;
-	
+	private Double value = new Double(0);
+
 	public DOUBLE() { }
-	
+
 	public DOUBLE(double value) {
 		this.set(value);
 	}
-	
+
 	public DOUBLE(AMF_Context context, DataInputStream input) throws IOException {
 		this.read(context, input);
 	}
@@ -29,25 +29,25 @@ public class DOUBLE extends AMF3_Type {
 	@Override
 	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
 		this.value = input.readDouble();
-		
+
 		return this;
 	}
-	
+
 	public void set(double value) {
 		this.value = value;
 	}
-	
+
 	public double get() {
 		return this.value;
 	}
 
 	@Override
 	public String toString() {
-		return String.valueOf(this.value);
+		return this.value.toString();
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return (int) this.value;
+		return this.value.hashCode();
 	}
 }

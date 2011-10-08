@@ -10,13 +10,13 @@ import de.uxnr.amf.v0.AMF0_Type;
 
 public class S16 extends AMF0_Type {
 	private int value = 0;
-	
+
 	public S16() { }
-	
+
 	public S16(int value) {
 		this.set(value);
 	}
-	
+
 	public S16(AMF_Context context, DataInputStream input) throws IOException {
 		this.read(context, input);
 	}
@@ -29,10 +29,10 @@ public class S16 extends AMF0_Type {
 	@Override
 	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
 		this.value = input.readShort();
-		
+
 		return this;
 	}
-	
+
 	public void set(int value) {
 		this.value = value;
 	}
@@ -45,9 +45,9 @@ public class S16 extends AMF0_Type {
 	public String toString() {
 		return String.valueOf(this.value);
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return this.value;
+		return this.value * 15;
 	}
 }

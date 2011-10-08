@@ -29,10 +29,10 @@ public class U16 extends AMF0_Type {
 	@Override
 	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
 		this.value = input.readUnsignedShort();
-		
+
 		return this;
 	}
-	
+
 	public void set(int value) {
 		this.value = value;
 	}
@@ -40,14 +40,14 @@ public class U16 extends AMF0_Type {
 	public int get() {
 		return this.value;
 	}
-	
+
 	@Override
 	public String toString() {
 		return String.valueOf(this.value);
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return this.value;
+		return this.value * 15;
 	}
 }

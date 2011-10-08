@@ -10,13 +10,13 @@ import de.uxnr.amf.v0.AMF0_Type;
 
 public class U32 extends AMF0_Type {
 	private long value = 0;
-	
+
 	public U32() { }
-	
+
 	public U32(long value) {
 		this.set(value);
 	}
-	
+
 	public U32(AMF_Context context, DataInputStream input) throws IOException {
 		this.read(context, input);
 	}
@@ -38,10 +38,10 @@ public class U32 extends AMF0_Type {
 			this.value = (buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | (buf[3]);
 		else
 			throw new IOException("Not enough data to read U32");
-		
+
 		return this;
 	}
-	
+
 	public void set(long value) {
 		this.value = value;
 	}
@@ -49,14 +49,14 @@ public class U32 extends AMF0_Type {
 	public long get() {
 		return this.value;
 	}
-	
+
 	@Override
 	public String toString() {
 		return String.valueOf(this.value);
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return (int) this.value;
+		return (int) (this.value * 31);
 	}
 }

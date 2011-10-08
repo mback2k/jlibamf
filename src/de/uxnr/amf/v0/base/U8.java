@@ -10,13 +10,13 @@ import de.uxnr.amf.v0.AMF0_Type;
 
 public class U8 extends AMF0_Type {
 	private int value = 0;
-	
+
 	public U8() { }
-	
+
 	public U8(int value) {
 		this.set(value);
 	}
-	
+
 	public U8(AMF_Context context, DataInputStream input) throws IOException {
 		this.read(context, input);
 	}
@@ -29,7 +29,7 @@ public class U8 extends AMF0_Type {
 	@Override
 	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
 		this.value = input.readUnsignedByte();
-		
+
 		return this;
 	}
 
@@ -40,7 +40,7 @@ public class U8 extends AMF0_Type {
 	public int get() {
 		return this.value;
 	}
-	
+
 	@Override
 	public String toString() {
 		return String.valueOf(this.value);
@@ -48,6 +48,6 @@ public class U8 extends AMF0_Type {
 
 	@Override
 	public int hashCode() {
-		return this.value;
+		return this.value * 15;
 	}
 }

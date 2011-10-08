@@ -110,6 +110,6 @@ public class U29 extends AMF3_Type {
 
 	@Override
 	public int hashCode() {
-		return this.value;
+		return this.value * 31;
 	}
 }
