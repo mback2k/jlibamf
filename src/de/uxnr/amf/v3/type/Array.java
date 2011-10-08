@@ -50,10 +50,11 @@ public class Array extends AMF3_Type {
 
 		context.addAMF3Object(this);
 
-		UTF8 key = new UTF8();
-		AMF3_Type value = new Undefined();
+		UTF8 key = null;
+		AMF3_Type value = null;
 		do {
-			key = new UTF8(context, input);
+			key = new UTF8();
+			key = (UTF8) key.read(context, input);
 
 			if (key.equals(Array.EMPTY_KEY)) {
 				break;

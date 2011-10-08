@@ -19,15 +19,17 @@ public class UTF8 extends AMF3_Type {
 		this.set(value);
 	}
 
-	public UTF8(AMF_Context context, DataInputStream input) throws IOException {
-		this.read(context, input);
-	}
-
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
+		if (this.value.isEmpty()) {
+			U29 empty = new U29(1);
+			empty.write(context, output);
+			return;
+		}
+
 		int reference = context.getAMF3StringReference(this);
 		if (reference >= 0) {
-			U29 flag = new U29(reference << 1);
+			U29 flag = new U29((reference << 1) & ~1);
 			flag.write(context, output);
 			return;
 		}
@@ -51,13 +53,14 @@ public class UTF8 extends AMF3_Type {
 	@Override
 	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
 		U29 flag = new U29(context, input);
-		if (flag.get() == 1)
+		int flags = flag.get();
+		if (flags == 1)
 			return this;
 
-		if ((flag.get() & 1) == 0)
-			return context.getAMF3String(flag.get() >> 1);
+		if ((flags & 1) == 0)
+			return context.getAMF3String(flags >> 1);
 
-		int length = (flag.get() >> 1);
+		int length = (flags >> 1);
 		byte[] buf = new byte[length];
 
 		if (input.read(buf) == length)

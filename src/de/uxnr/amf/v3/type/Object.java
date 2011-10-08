@@ -84,18 +84,20 @@ public class Object extends AMF3_Type {
 			this.trait = new AMF3_Trait();
 			this.trait.setExternalizable((flags & 4) == 4);
 			this.trait.setDynamic((flags & 8) == 8);
-			this.trait.setClassName(new UTF8(context, input));
 
-			long count = flags >> 4;
-			for (long index = 0; index < count; index++) {
-				UTF8 name = new UTF8(context, input);
+			UTF8 className = new UTF8();
+			className = (UTF8) className.read(context, input);
+			this.trait.setClassName(className);
+
+			int count = flags >> 4;
+			for (int index = 0; index < count; index++) {
+				UTF8 name = new UTF8();
+				name = (UTF8) name.read(context, input);
 				this.trait.addName(name);
 			}
 
 			context.addAMF3Trait(this.trait);
 		}
-
-		context.addAMF3Object(this);
 
 		if (this.trait.isExternalizable()) {
 			this.external = Flex.readMessage(context, input, this.trait.getClassName());
@@ -107,10 +109,11 @@ public class Object extends AMF3_Type {
 			}
 
 			if (this.trait.isDynamic()) {
-				UTF8 key = new UTF8();
-				AMF3_Type value = new Undefined();
+				UTF8 key = null;
+				AMF3_Type value = null;
 				do {
-					key = new UTF8(context, input);
+					key = new UTF8();
+					key = (UTF8) key.read(context, input);
 
 					if (key.equals(Object.EMPTY_KEY)) {
 						break;
@@ -122,6 +125,8 @@ public class Object extends AMF3_Type {
 				} while (key != null && value != null);
 			}
 		}
+
+		context.addAMF3Object(this);
 
 		return this;
 	}
