@@ -119,7 +119,21 @@ public class Array extends AMF3_Type {
 
 	@Override
 	public java.lang.String toString() {
-		return "Array " + this.value1 + " ; " + this.value2;
+		StringBuilder sb = new StringBuilder();
+		sb.append("Array {\n");
+		for (Entry<UTF8, AMF3_Type> entry : this.value1.entrySet()) {
+			sb.append(entry.getKey());
+			sb.append(": ");
+			sb.append(entry.getValue());
+			sb.append(",\n");
+		}
+		sb.append("} ; [\n");
+		for (AMF3_Type value : this.value2) {
+			sb.append(value.toString());
+			sb.append(",\n");
+		}
+		sb.append("]\n");
+		return sb.toString();
 	}
 
 	@Override

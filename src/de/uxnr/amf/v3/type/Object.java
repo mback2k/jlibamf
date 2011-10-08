@@ -224,9 +224,26 @@ public class Object extends AMF3_Type {
 
 	@Override
 	public java.lang.String toString() {
-		if (this.external != null)
-			return "External '" + this.getClassName() + "' " + this.external;
-		return "Object '" + this.getClassName() + "' " + this.value;
+		StringBuilder sb = new StringBuilder();
+		if (this.external != null) {
+			sb.append("External '");
+			sb.append(this.getClassName());
+			sb.append("' (\n");
+			sb.append(this.external);
+			sb.append(")");
+		} else {
+			sb.append("Object '");
+			sb.append(this.getClassName());
+			sb.append("' {\n");
+			for (Entry<UTF8, AMF3_Type> entry : this.value.entrySet()) {
+				sb.append(entry.getKey());
+				sb.append(": ");
+				sb.append(entry.getValue());
+				sb.append(",\n");
+			}
+			sb.append("}");
+		}
+		return sb.toString();
 	}
 
 	@Override
