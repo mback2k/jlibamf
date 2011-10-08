@@ -118,4 +118,9 @@ public abstract class AbstractMessage extends Object {
 		} while ((ubyte.get() & 0x80) == 0x80);
 		return flags;
 	}
+
+	@Override
+	public String getClassName() {
+		return this.getClass().getSimpleName();
+	}
 }

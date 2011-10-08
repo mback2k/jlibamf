@@ -165,8 +165,8 @@ public class Object extends AMF3_Type {
 	@Override
 	public java.lang.String toString() {
 		if (this.external != null)
-			return "External " + this.external;
-		return "Object " + this.value;
+			return "External '" + this.getClassName() + "' " + this.external;
+		return "Object '" + this.getClassName() + "' " + this.value;
 	}
 
 	@Override
