@@ -3,6 +3,7 @@ package de.uxnr.amf.v3.type;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,13 +12,17 @@ import java.util.Set;
 
 import de.uxnr.amf.AMF_Context;
 import de.uxnr.amf.AMF_Type;
-import de.uxnr.amf.flex.Flex;
 import de.uxnr.amf.v3.AMF3_Trait;
 import de.uxnr.amf.v3.AMF3_Type;
 import de.uxnr.amf.v3.base.U29;
 import de.uxnr.amf.v3.base.UTF8;
 
+@SuppressWarnings("rawtypes")
 public class Object extends AMF3_Type {
+	private static final Map<UTF8, Class> objectClasses = new HashMap<UTF8, Class>();
+	private static final Map<UTF8, Class> internalClasses = new HashMap<UTF8, Class>();
+	private static final Map<UTF8, Class> externalClasses = new HashMap<UTF8, Class>();
+
 	private static final UTF8 EMPTY_KEY = new UTF8();
 
 	private final Map<UTF8, AMF3_Type> value = new LinkedHashMap<UTF8, AMF3_Type>();
@@ -50,7 +55,15 @@ public class Object extends AMF3_Type {
 		}
 
 		if (this.trait.isExternalizable()) {
-			Flex.writeMessage(context, output, className, this.external);
+			if (Object.externalClasses.containsKey(className)) {
+				this.external.write(context, output);
+
+			} else if (Object.internalClasses.containsKey(className)) {
+				AMF3_Type.writeType(context, output, this.external);
+
+			} else {
+				throw new RuntimeException("Unsupported message/class "+className);
+			}
 		} else {
 			for (UTF8 name : names) {
 				AMF3_Type.writeType(context, output, this.value.get(name));
@@ -80,12 +93,13 @@ public class Object extends AMF3_Type {
 		if ((flags & 2) == 0)
 			this.trait = context.getAMF3Trait(flags >> 2);
 
+		UTF8 className = new UTF8();
+
 		if (this.trait == null) {
 			this.trait = new AMF3_Trait();
 			this.trait.setExternalizable((flags & 4) == 4);
 			this.trait.setDynamic((flags & 8) == 8);
 
-			UTF8 className = new UTF8();
 			className = (UTF8) className.read(context, input);
 			this.trait.setClassName(className);
 
@@ -97,10 +111,28 @@ public class Object extends AMF3_Type {
 			}
 
 			context.addAMF3Trait(this.trait);
+
+		} else {
+			className = this.trait.getClassName();
 		}
 
 		if (this.trait.isExternalizable()) {
-			this.external = Flex.readMessage(context, input, this.trait.getClassName());
+			if (Object.externalClasses.containsKey(className)) {
+				try {
+					this.external = (AMF3_Type) Object.externalClasses.get(className).newInstance();
+					this.external = (AMF3_Type) this.external.read(context, input);
+				} catch (Exception e) {
+					throw new IOException(e);
+				}
+
+			} else if (Object.internalClasses.containsKey(className)) {
+				this.external = AMF3_Type.readType(context, input);
+
+			} else {
+				throw new RuntimeException("Unsupported message/class "+className);
+			}
+
+			return this;
 		} else {
 			for (UTF8 name : this.trait.getNames()) {
 				AMF3_Type value = AMF3_Type.readType(context, input);
@@ -184,5 +216,17 @@ public class Object extends AMF3_Type {
 		if (this.external != null)
 			this.hashCode ^= this.external.hashCode();
 		return this.hashCode;
+	}
+
+	public static void registerObjectClass(UTF8 className, Class objectClass) {
+		Object.objectClasses.put(className, objectClass);
+	}
+
+	public static void registerInternalClass(UTF8 className, Class internalClass) {
+		Object.internalClasses.put(className, internalClass);
+	}
+
+	public static void registerExternalClass(UTF8 className, Class externalClass) {
+		Object.externalClasses.put(className, externalClass);
 	}
 }
