@@ -48,8 +48,6 @@ public class AMFTest {
 
 		test.read(context, new DataInputStream(in));
 
-		System.out.println(value+" => "+test.get());
-
 		if (value != test.get())
 			throw new RuntimeException("Test failed!");
 	}
@@ -57,15 +55,9 @@ public class AMFTest {
 	public static void test(File file) throws IOException {
 		FileInputStream input = new FileInputStream(file);
 
-		System.out.println(file.length());
-		System.out.println(input.available());
-
 		AMF amf = new AMF(input);
 		int hashCode = amf.hashCode();
-
-		System.out.println(amf.getHeaders().size());
-		System.out.println(amf.getMessages().size());
-		System.out.println(input.available());
+		String toString = amf.toString();
 
 		if (input.available() != 0)
 			throw new RuntimeException("Test failed!");
@@ -81,9 +73,10 @@ public class AMFTest {
 
 		amf = new AMF(in);
 
-		System.out.println(hashCode+" == "+amf.hashCode());
-
 		if (hashCode != amf.hashCode())
+			throw new RuntimeException("Test failed!");
+
+		if (toString.hashCode() != amf.toString().hashCode())
 			throw new RuntimeException("Test failed!");
 	}
 }
