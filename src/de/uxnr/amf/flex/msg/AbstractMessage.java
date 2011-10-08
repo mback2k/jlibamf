@@ -3,7 +3,9 @@ package de.uxnr.amf.flex.msg;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import de.uxnr.amf.AMF_Context;
@@ -11,9 +13,8 @@ import de.uxnr.amf.AMF_Type;
 import de.uxnr.amf.v0.base.U8;
 import de.uxnr.amf.v3.AMF3_Type;
 import de.uxnr.amf.v3.base.UTF8;
-import de.uxnr.amf.v3.type.Object;
 
-public abstract class AbstractMessage extends Object {
+public abstract class AbstractMessage extends AMF3_Type {
 	private static final UTF8[][] names = new UTF8[][] {
 		{
 			new UTF8("body"),
@@ -29,6 +30,10 @@ public abstract class AbstractMessage extends Object {
 			new UTF8("messageUuid"),
 		}
 	};
+
+	private final Map<UTF8, AMF3_Type> value = new LinkedHashMap<UTF8, AMF3_Type>();
+
+	private Integer hashCode = null;
 
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
@@ -50,7 +55,7 @@ public abstract class AbstractMessage extends Object {
 			int flag = 0;
 
 			for (int index = 0; index < name.length; index++) {
-				AMF3_Type value = this.get(name[index]);
+				AMF3_Type value = this.value.get(name[index]);
 
 				if (value != null) {
 					values.add(value);
@@ -58,7 +63,7 @@ public abstract class AbstractMessage extends Object {
 			}
 
 			for (int index = name.length - 1; index >= 0; index--) {
-				AMF3_Type value = this.get(name[index]);
+				AMF3_Type value = this.value.get(name[index]);
 
 				flag <<= 1;
 				if (value != null) {
@@ -90,11 +95,13 @@ public abstract class AbstractMessage extends Object {
 			if (index < names.length) {
 				for (UTF8 name : names[index++]) {
 					if (((flag >> (reserved++)) & 1) == 1) {
-						this.set(name, AMF3_Type.readType(context, input), true);
+						this.value.put(name, AMF3_Type.readType(context, input));
 					}
 				}
 			}
 		}
+
+		this.hashCode = null;
 	}
 
 	private void writeFlags(AMF_Context context, DataOutputStream output, List<Integer> flags) throws IOException {
@@ -119,8 +126,19 @@ public abstract class AbstractMessage extends Object {
 		return flags;
 	}
 
-	@Override
 	public String getClassName() {
 		return this.getClass().getSimpleName();
+	}
+
+	@Override
+	public String toString() {
+		return "Flex '" + this.getClassName() + "' " + this.value;
+	}
+
+	@Override
+	public int hashCode() {
+		if (this.hashCode != null)
+			return this.hashCode;
+		return this.hashCode = this.getClass().hashCode() ^ this.value.hashCode();
 	}
 }
