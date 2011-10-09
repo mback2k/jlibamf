@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -68,17 +69,33 @@ public class Object extends AMF0_Type {
 		return this.value.entrySet();
 	}
 
+	public Set<AMF0_Type> valueSet() {
+		return new LinkedHashSet<AMF0_Type>(this.value.values());
+	}
+
 	public void put(UTF8 key, AMF0_Type value) {
 		this.hashCode = null;
 		this.value.put(key, value);
+	}
+
+	public void put(java.lang.String key, AMF0_Type value) {
+		this.put(new UTF8(key), value);
 	}
 
 	public void set(UTF8 key, AMF0_Type value) {
 		this.put(key, value);
 	}
 
+	public void set(java.lang.String key, AMF0_Type value) {
+		this.put(new UTF8(key), value);
+	}
+
 	public AMF0_Type get(UTF8 key) {
 		return this.value.get(key);
+	}
+
+	public AMF0_Type get(java.lang.String key) {
+		return this.get(new UTF8(key));
 	}
 
 	@Override

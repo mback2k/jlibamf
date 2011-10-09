@@ -3,8 +3,9 @@ package de.uxnr.amf.v0.type;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import de.uxnr.amf.AMF_Context;
@@ -50,8 +51,12 @@ public class StrictArray extends AMF0_Type {
 		return this;
 	}
 
-	public Iterator<AMF0_Type> iterator() {
-		return this.value.iterator();
+	public Set<AMF0_Type> values() {
+		return new LinkedHashSet<AMF0_Type>(this.value);
+	}
+
+	public int size() {
+		return this.value.size();
 	}
 
 	public void add(AMF0_Type value) {
