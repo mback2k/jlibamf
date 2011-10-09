@@ -18,11 +18,10 @@ import de.uxnr.amf.v3.AMF3_Type;
 import de.uxnr.amf.v3.base.U29;
 import de.uxnr.amf.v3.base.UTF8;
 
-@SuppressWarnings("rawtypes")
 public class Object extends AMF3_Type {
-	private static final Map<UTF8, Class> objectClasses = new HashMap<UTF8, Class>();
-	private static final Map<UTF8, Class> internalClasses = new HashMap<UTF8, Class>();
-	private static final Map<UTF8, Class> externalClasses = new HashMap<UTF8, Class>();
+	private static final Map<UTF8, Class<? extends AMF3_Type>> objectClasses = new HashMap<UTF8, Class<? extends AMF3_Type>>();
+	private static final Map<UTF8, Class<? extends AMF3_Type>> internalClasses = new HashMap<UTF8, Class<? extends AMF3_Type>>();
+	private static final Map<UTF8, Class<? extends AMF3_Type>> externalClasses = new HashMap<UTF8, Class<? extends AMF3_Type>>();
 
 	private static final UTF8 EMPTY_KEY = new UTF8();
 
@@ -141,7 +140,7 @@ public class Object extends AMF3_Type {
 		if (this.trait.isExternalizable()) {
 			if (Object.externalClasses.containsKey(className)) {
 				try {
-					this.external = (AMF3_Type) Object.externalClasses.get(className).newInstance();
+					this.external = Object.externalClasses.get(className).newInstance();
 					this.external = (AMF3_Type) this.external.read(context, input);
 				} catch (Exception e) {
 					throw new IOException(e);
@@ -275,15 +274,15 @@ public class Object extends AMF3_Type {
 		return this.hashCode;
 	}
 
-	public static void registerObjectClass(UTF8 className, Class objectClass) {
+	public static void registerObjectClass(UTF8 className, Class<? extends AMF3_Type> objectClass) {
 		Object.objectClasses.put(className, objectClass);
 	}
 
-	public static void registerInternalClass(UTF8 className, Class internalClass) {
+	public static void registerInternalClass(UTF8 className, Class<? extends AMF3_Type> internalClass) {
 		Object.internalClasses.put(className, internalClass);
 	}
 
-	public static void registerExternalClass(UTF8 className, Class externalClass) {
+	public static void registerExternalClass(UTF8 className, Class<? extends AMF3_Type> externalClass) {
 		Object.externalClasses.put(className, externalClass);
 	}
 }

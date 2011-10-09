@@ -11,12 +11,11 @@ import de.uxnr.amf.AMF_Type;
 import de.uxnr.amf.v0.base.U8;
 import de.uxnr.amf.v0.type.Reference;
 
-@SuppressWarnings("rawtypes")
 abstract public class AMF0_Type implements AMF_Type {
-	private static final Map<U8, Class> types = new HashMap<U8, Class>();
-	private static final Map<Class, U8> classes = new HashMap<Class, U8>();
+	private static final HashMap<U8, Class<? extends AMF0_Type>> types = new HashMap<U8, Class<? extends AMF0_Type>>();
+	private static final Map<Class<? extends AMF0_Type>, U8> classes = new HashMap<Class<? extends AMF0_Type>, U8>();
 
-	public static void registerType(U8 type, Class typeClass) {
+	public static void registerType(U8 type, Class<? extends AMF0_Type> typeClass) {
 		AMF0_Type.types.put(type, typeClass);
 		AMF0_Type.classes.put(typeClass, type);
 	}
@@ -40,7 +39,7 @@ abstract public class AMF0_Type implements AMF_Type {
 		}
 
 		try {
-			value = (AMF0_Type) AMF0_Type.types.get(type).newInstance();
+			value = AMF0_Type.types.get(type).newInstance();
 		} catch (Exception e) {
 			throw new IOException(e);
 		}

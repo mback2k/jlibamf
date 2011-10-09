@@ -10,12 +10,11 @@ import de.uxnr.amf.AMF_Context;
 import de.uxnr.amf.v0.AMF0_Type;
 import de.uxnr.amf.v0.base.U8;
 
-@SuppressWarnings("rawtypes")
 abstract public class AMF3_Type extends AMF0_Type {
-	private static final Map<U8, Class> types = new HashMap<U8, Class>();
-	private static final Map<Class, U8> classes = new HashMap<Class, U8>();
+	private static final Map<U8, Class<? extends AMF3_Type>> types = new HashMap<U8, Class<? extends AMF3_Type>>();
+	private static final Map<Class<? extends AMF3_Type>, U8> classes = new HashMap<Class<? extends AMF3_Type>, U8>();
 
-	public static void registerType(U8 type, Class typeClass) {
+	public static void registerType(U8 type, Class<? extends AMF3_Type> typeClass) {
 		AMF3_Type.types.put(type, typeClass);
 		AMF3_Type.classes.put(typeClass, type);
 	}
@@ -34,7 +33,7 @@ abstract public class AMF3_Type extends AMF0_Type {
 		}
 
 		try {
-			value = (AMF3_Type) AMF3_Type.types.get(type).newInstance();
+			value = AMF3_Type.types.get(type).newInstance();
 		} catch (Exception e) {
 			throw new IOException(e);
 		}
