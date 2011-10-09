@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.Vector;
 
 import de.uxnr.amf.AMF_Context;
@@ -124,6 +126,27 @@ public abstract class AbstractMessage extends AMF3_Type {
 			flags.add(ubyte.get() & ~0x80);
 		} while ((ubyte.get() & 0x80) == 0x80);
 		return flags;
+	}
+
+	public Set<UTF8> keySet() {
+		return this.value.keySet();
+	}
+
+	public Set<Entry<UTF8, AMF3_Type>> entrySet() {
+		return this.value.entrySet();
+	}
+
+	public void put(UTF8 key, AMF3_Type value) {
+		this.hashCode = null;
+		this.value.put(key, value);
+	}
+
+	public void set(UTF8 key, AMF3_Type value) {
+		this.put(key, value);
+	}
+
+	public AMF3_Type get(UTF8 key) {
+		return this.value.get(key);
 	}
 
 	public String getClassName() {
