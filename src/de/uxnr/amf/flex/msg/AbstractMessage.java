@@ -3,8 +3,8 @@ package de.uxnr.amf.flex.msg;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -137,8 +137,8 @@ public abstract class AbstractMessage extends AMF3_Type {
 		return this.value.entrySet();
 	}
 
-	public Set<AMF3_Type> valueSet() {
-		return new LinkedHashSet<AMF3_Type>(this.value.values());
+	public Collection<AMF3_Type> values() {
+		return this.value.values();
 	}
 
 	public void put(UTF8 key, AMF3_Type value) {

@@ -3,8 +3,8 @@ package de.uxnr.amf.v3.type;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -96,12 +96,11 @@ public class Array extends AMF3_Type {
 		return this.value1.entrySet();
 	}
 
-	public Set<AMF3_Type> valueSet() {
-		return new LinkedHashSet<AMF3_Type>(this.value1.values());
-	}
-
-	public Set<AMF3_Type> values() {
-		return new LinkedHashSet<AMF3_Type>(this.value2);
+	public Collection<AMF3_Type> values() {
+		Collection<AMF3_Type> values = new Vector<AMF3_Type>();
+		values.addAll(this.value1.values());
+		values.addAll(this.value2);
+		return values;
 	}
 
 	public int size() {

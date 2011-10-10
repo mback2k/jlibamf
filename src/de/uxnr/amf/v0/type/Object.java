@@ -3,8 +3,8 @@ package de.uxnr.amf.v0.type;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -69,8 +69,8 @@ public class Object extends AMF0_Type {
 		return this.value.entrySet();
 	}
 
-	public Set<AMF0_Type> valueSet() {
-		return new LinkedHashSet<AMF0_Type>(this.value.values());
+	public Collection<AMF0_Type> values() {
+		return this.value.values();
 	}
 
 	public void put(UTF8 key, AMF0_Type value) {
