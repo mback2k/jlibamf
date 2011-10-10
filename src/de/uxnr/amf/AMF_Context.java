@@ -14,9 +14,8 @@ public class AMF_Context {
 	private final List<AMF3_Trait> amf3trait = new Vector<AMF3_Trait>();
 	private final List<UTF8> amf3strings = new Vector<UTF8>();
 
-	public int addAMF0Object(AMF0_Type value) {
+	public void addAMF0Object(AMF0_Type value) {
 		this.amf0objects.add(value);
-		return this.amf0objects.indexOf(value);
 	}
 
 	public AMF0_Type getAMF0Object(int index) {
@@ -27,9 +26,8 @@ public class AMF_Context {
 		return this.amf0objects.indexOf(value);
 	}
 
-	public int addAMF3Object(AMF3_Type value) {
+	public void addAMF3Object(AMF3_Type value) {
 		this.amf3objects.add(value);
-		return this.amf3objects.indexOf(value);
 	}
 
 	public AMF3_Type getAMF3Object(int index) {
@@ -40,9 +38,8 @@ public class AMF_Context {
 		return this.amf3objects.indexOf(value);
 	}
 
-	public int addAMF3Trait(AMF3_Trait value) {
+	public void addAMF3Trait(AMF3_Trait value) {
 		this.amf3trait.add(value);
-		return this.amf3trait.indexOf(value);
 	}
 
 	public AMF3_Trait getAMF3Trait(int index) {
@@ -53,9 +50,8 @@ public class AMF_Context {
 		return this.amf3trait.indexOf(value);
 	}
 
-	public int addAMF3String(UTF8 value) {
+	public void addAMF3String(UTF8 value) {
 		this.amf3strings.add(value);
-		return this.amf3strings.indexOf(value);
 	}
 
 	public UTF8 getAMF3String(int index) {
