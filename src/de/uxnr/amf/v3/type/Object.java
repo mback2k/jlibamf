@@ -279,12 +279,12 @@ public class Object extends AMF3_Type {
 	public int hashCode() {
 		if (this.hashCode != null)
 			return this.hashCode;
-		this.hashCode = this.value.hashCode();
+		int hashCode = this.value.hashCode();
 		if (this.trait != null)
-			this.hashCode ^= this.trait.hashCode();
+			hashCode ^= this.trait.hashCode();
 		if (this.external != null)
-			this.hashCode ^= this.external.hashCode();
-		return this.hashCode;
+			hashCode ^= this.external.hashCode();
+		return this.hashCode = hashCode;
 	}
 
 	public static void registerObjectClass(UTF8 className, Class<? extends AMF3_Object> objectClass) {
