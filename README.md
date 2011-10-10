@@ -8,9 +8,8 @@ Features
 --------
 - Supports AMF version 0
 - Supports AMF version 3
-- Supports Flex messaging classes (incomplete)
+- Supports Flex messaging classes
 
 TODO
 ----
-- Implement external class support
-- Finish implementation of Flex classes
+- Extend custom object class support

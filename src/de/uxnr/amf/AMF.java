@@ -12,6 +12,9 @@ import de.uxnr.amf.flex.Flex;
 import de.uxnr.amf.v0.AMF0;
 import de.uxnr.amf.v0.base.U16;
 import de.uxnr.amf.v3.AMF3;
+import de.uxnr.amf.v3.AMF3_Object;
+import de.uxnr.amf.v3.base.UTF8;
+import de.uxnr.amf.v3.type.Object;
 
 public class AMF {
 	static {
@@ -104,7 +107,7 @@ public class AMF {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(java.lang.Object obj) {
 		if (obj == null)
 			return false;
 
@@ -120,5 +123,9 @@ public class AMF {
 	@Override
 	public int hashCode() {
 		return this.headers.hashCode() ^ this.messages.hashCode();
+	}
+
+	public static void registerObjectClass(String className, Class<? extends AMF3_Object> objectClass) {
+		Object.registerObjectClass(new UTF8(className), objectClass);
 	}
 }

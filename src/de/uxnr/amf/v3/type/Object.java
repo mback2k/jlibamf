@@ -13,13 +13,14 @@ import java.util.Set;
 
 import de.uxnr.amf.AMF_Context;
 import de.uxnr.amf.AMF_Type;
+import de.uxnr.amf.v3.AMF3_Object;
 import de.uxnr.amf.v3.AMF3_Trait;
 import de.uxnr.amf.v3.AMF3_Type;
 import de.uxnr.amf.v3.base.U29;
 import de.uxnr.amf.v3.base.UTF8;
 
 public class Object extends AMF3_Type {
-	private static final Map<UTF8, Class<? extends AMF3_Type>> objectClasses = new HashMap<UTF8, Class<? extends AMF3_Type>>();
+	private static final Map<UTF8, Class<? extends AMF3_Object>> objectClasses = new HashMap<UTF8, Class<? extends AMF3_Object>>();
 	private static final Map<UTF8, Class<? extends AMF3_Type>> internalClasses = new HashMap<UTF8, Class<? extends AMF3_Type>>();
 	private static final Map<UTF8, Class<? extends AMF3_Type>> externalClasses = new HashMap<UTF8, Class<? extends AMF3_Type>>();
 
@@ -183,6 +184,18 @@ public class Object extends AMF3_Type {
 
 		this.hashCode = null;
 
+		if (Object.objectClasses.containsKey(className)) {
+			AMF3_Object object;
+			try {
+				object = Object.objectClasses.get(className).newInstance();
+				object.setInnerObject(this);
+				object.readFields(this);
+			} catch (Exception e) {
+				throw new IOException(e);
+			}
+			return object;
+		}
+
 		return this;
 	}
 
@@ -274,7 +287,7 @@ public class Object extends AMF3_Type {
 		return this.hashCode;
 	}
 
-	public static void registerObjectClass(UTF8 className, Class<? extends AMF3_Type> objectClass) {
+	public static void registerObjectClass(UTF8 className, Class<? extends AMF3_Object> objectClass) {
 		Object.objectClasses.put(className, objectClass);
 	}
 
