@@ -1,11 +1,13 @@
 package de.uxnr.amf.v3;
 
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 
 import de.uxnr.amf.AMF_Context;
 import de.uxnr.amf.v3.type.Array;
@@ -19,7 +21,7 @@ public abstract class AMF3_Object extends AMF3_Type {
 
 	private transient Object innerObject = null;
 
-	public void setInnerObject(Object innerObject) {
+	public final void setInnerObject(Object innerObject) {
 		this.innerObject = innerObject;
 	}
 
@@ -51,22 +53,37 @@ public abstract class AMF3_Object extends AMF3_Type {
 					Object value = (Object) object.get(fieldName);
 					this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
 					field.set(this, value);
+
 				} else if (field.getType() == Array.class) {
 					Array value = (Array) ((Object) object.get(fieldName)).getExternal();
 					this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
 					field.set(this, value);
+
 				} else if (field.getType() == java.lang.String.class) {
 					java.lang.String value = ((String) object.get(fieldName)).get();
 					this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
 					field.set(this, value);
+
 				} else if (field.getType() == java.lang.Integer.class) {
 					java.lang.Integer value = ((Integer) object.get(fieldName)).get();
 					this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
 					field.set(this, value);
+
 				} else if (field.getType() == java.lang.Double.class) {
 					java.lang.Double value = ((Double) object.get(fieldName)).get();
 					this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
 					field.set(this, value);
+
+				} else if (AMF3_Object.class.isAssignableFrom(field.getType())) {
+					AMF3_Object value = (AMF3_Object) object.get(fieldName);
+					this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
+					field.set(this, value);
+
+				} else if (Collection.class.isAssignableFrom(field.getType())) {
+					Collection<AMF3_Type> value = ((Array) ((Object) object.get(fieldName)).getExternal()).values();
+					this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
+					field.set(this, value);
+
 				}
 
 			} catch (ClassCastException e) {
@@ -77,5 +94,13 @@ public abstract class AMF3_Object extends AMF3_Type {
 				modifiersField.setAccessible(false);
 			}
 		}
+	}
+
+	public void addPropertyChangeListener(java.lang.String propertyName, PropertyChangeListener listener) {
+		this.propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		this.propertyChangeSupport.removePropertyChangeListener(listener);
 	}
 }
