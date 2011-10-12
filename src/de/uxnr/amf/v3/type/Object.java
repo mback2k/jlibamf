@@ -199,6 +199,10 @@ public class Object extends AMF3_Type {
 		return this;
 	}
 
+	public Map<UTF8, AMF3_Type> getData() {
+		return this.value;
+	}
+
 	public Set<UTF8> keySet() {
 		return this.value.keySet();
 	}

@@ -88,6 +88,10 @@ public class Array extends AMF3_Type {
 		return this;
 	}
 
+	public Map<UTF8, AMF3_Type> getData() {
+		return this.value1;
+	}
+
 	public Set<UTF8> keySet() {
 		return this.value1.keySet();
 	}
