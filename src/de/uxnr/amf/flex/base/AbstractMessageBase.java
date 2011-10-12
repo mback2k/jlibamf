@@ -1,4 +1,4 @@
-package de.uxnr.amf.flex.msg;
+package de.uxnr.amf.flex.base;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -14,10 +14,11 @@ import java.util.Vector;
 import de.uxnr.amf.AMF_Context;
 import de.uxnr.amf.AMF_Type;
 import de.uxnr.amf.v0.base.U8;
+import de.uxnr.amf.v3.AMF3_Object;
 import de.uxnr.amf.v3.AMF3_Type;
 import de.uxnr.amf.v3.base.UTF8;
 
-public abstract class AbstractMessage extends AMF3_Type {
+public abstract class AbstractMessageBase extends AMF3_Object {
 	private static final UTF8[][] names = new UTF8[][] {
 		{
 			new UTF8("body"),
@@ -34,18 +35,18 @@ public abstract class AbstractMessage extends AMF3_Type {
 		}
 	};
 
-	private final Map<UTF8, AMF3_Type> value = new LinkedHashMap<UTF8, AMF3_Type>();
+	private transient final Map<UTF8, AMF3_Type> value = new LinkedHashMap<UTF8, AMF3_Type>();
 
-	private Integer hashCode = null;
+	private transient Integer hashCode = null;
 
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
-		this.writeFields(context, output, AbstractMessage.names);
+		this.writeFields(context, output, AbstractMessageBase.names);
 	}
 
 	@Override
 	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
-		this.readFields(context, input, AbstractMessage.names);
+		this.readFields(context, input, AbstractMessageBase.names);
 
 		return this;
 	}
@@ -127,6 +128,10 @@ public abstract class AbstractMessage extends AMF3_Type {
 			flags.add(ubyte.get() & ~0x80);
 		} while ((ubyte.get() & 0x80) == 0x80);
 		return flags;
+	}
+
+	public Map<UTF8, AMF3_Type> getData() {
+		return this.value;
 	}
 
 	public Set<UTF8> keySet() {

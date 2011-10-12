@@ -1,4 +1,4 @@
-package de.uxnr.amf.flex.msg;
+package de.uxnr.amf.flex.type;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -6,27 +6,21 @@ import java.io.IOException;
 
 import de.uxnr.amf.AMF_Context;
 import de.uxnr.amf.AMF_Type;
-import de.uxnr.amf.v3.base.UTF8;
+import de.uxnr.amf.flex.base.AcknowledgeMessageBase;
 
-public class CommandMessage extends AsyncMessage {
-	private static final UTF8[][] names = new UTF8[][] {
-		{
-			new UTF8("operation"),
-		}
-	};
-
+public class AcknowledgeMessage extends AcknowledgeMessageBase {
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
-		super.write(context, output);
+		// TODO Write object fields
 
-		this.writeFields(context, output, CommandMessage.names);
+		super.write(context, output);
 	}
 
 	@Override
 	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
 		super.read(context, input);
 
-		this.readFields(context, input, CommandMessage.names);
+		this.readFields(AcknowledgeMessage.class, this.getData());
 
 		return this;
 	}

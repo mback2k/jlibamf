@@ -1,8 +1,8 @@
 package de.uxnr.amf.flex;
 
-import de.uxnr.amf.flex.msg.AcknowledgeMessage;
-import de.uxnr.amf.flex.msg.AsyncMessage;
-import de.uxnr.amf.flex.msg.CommandMessage;
+import de.uxnr.amf.flex.type.AcknowledgeMessage;
+import de.uxnr.amf.flex.type.AsyncMessage;
+import de.uxnr.amf.flex.type.CommandMessage;
 import de.uxnr.amf.v3.base.UTF8;
 import de.uxnr.amf.v3.type.Array;
 import de.uxnr.amf.v3.type.Object;
