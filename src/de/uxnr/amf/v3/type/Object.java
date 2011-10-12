@@ -189,7 +189,7 @@ public class Object extends AMF3_Type {
 			try {
 				object = Object.objectClasses.get(className).newInstance();
 				object.setInnerObject(this);
-				object.readFields(this);
+				object.read(context, input);
 			} catch (Exception e) {
 				throw new IOException(e);
 			}
@@ -251,7 +251,15 @@ public class Object extends AMF3_Type {
 		return this.trait.getClassName().get();
 	}
 
-	public AMF3_Type getExternal() {
+	public boolean isDynamic() {
+		return this.trait.isDynamic();
+	}
+
+	public boolean isExternalizable() {
+		return this.trait.isExternalizable();
+	}
+
+	public AMF3_Type getExternalized() {
 		return this.external;
 	}
 
