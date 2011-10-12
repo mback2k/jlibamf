@@ -36,9 +36,10 @@ public class Date extends DOUBLE {
 	@Override
 	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
 		U29 flag = new U29(context, input);
+		int flags = flag.get();
 
-		if ((flag.get() & 1) == 0)
-			return context.getAMF3Object(flag.get() >> 1);
+		if ((flags & 1) == 0)
+			return context.getAMF3Object(flags >> 1);
 
 		context.addAMF3Object(this);
 
