@@ -14,6 +14,7 @@ import java.util.Set;
 import de.uxnr.amf.AMF_Context;
 import de.uxnr.amf.AMF_Type;
 import de.uxnr.amf.v3.AMF3_Object;
+import de.uxnr.amf.v3.AMF3_Reference;
 import de.uxnr.amf.v3.AMF3_Trait;
 import de.uxnr.amf.v3.AMF3_Type;
 import de.uxnr.amf.v3.base.U29;
@@ -136,7 +137,8 @@ public class Object extends AMF3_Type {
 			className = this.trait.getClassName();
 		}
 
-		context.addAMF3Object(this);
+		AMF3_Reference ref = new AMF3_Reference(this);
+		context.addAMF3Object(ref);
 
 		if (this.trait.isExternalizable()) {
 			if (Object.externalClasses.containsKey(className)) {
@@ -186,6 +188,7 @@ public class Object extends AMF3_Type {
 
 		if (Object.objectClasses.containsKey(className)) {
 			AMF3_Object object;
+
 			try {
 				object = Object.objectClasses.get(className).newInstance();
 				object.setInnerObject(this);
@@ -193,6 +196,9 @@ public class Object extends AMF3_Type {
 			} catch (Exception e) {
 				throw new IOException(e);
 			}
+
+			ref.setValue(object);
+
 			return object;
 		}
 

@@ -4,13 +4,14 @@ import java.util.List;
 import java.util.Vector;
 
 import de.uxnr.amf.v0.AMF0_Type;
+import de.uxnr.amf.v3.AMF3_Reference;
 import de.uxnr.amf.v3.AMF3_Trait;
 import de.uxnr.amf.v3.AMF3_Type;
 import de.uxnr.amf.v3.base.UTF8;
 
 public class AMF_Context {
 	private final List<AMF0_Type> amf0objects = new Vector<AMF0_Type>();
-	private final List<AMF3_Type> amf3objects = new Vector<AMF3_Type>();
+	private final List<AMF3_Reference> amf3objects = new Vector<AMF3_Reference>();
 	private final List<AMF3_Trait> amf3trait = new Vector<AMF3_Trait>();
 	private final List<UTF8> amf3strings = new Vector<UTF8>();
 
@@ -26,16 +27,20 @@ public class AMF_Context {
 		return this.amf0objects.indexOf(value);
 	}
 
-	public void addAMF3Object(AMF3_Type value) {
+	public void addAMF3Object(AMF3_Reference value) {
 		this.amf3objects.add(value);
 	}
 
+	public void addAMF3Object(AMF3_Type value) {
+		this.addAMF3Object(new AMF3_Reference(value));
+	}
+
 	public AMF3_Type getAMF3Object(int index) {
-		return this.amf3objects.get(index);
+		return this.amf3objects.get(index).getValue();
 	}
 
 	public int getAMF3ObjectReference(AMF3_Type value) {
-		return this.amf3objects.indexOf(value);
+		return this.amf3objects.indexOf(new AMF3_Reference(value));
 	}
 
 	public void addAMF3Trait(AMF3_Trait value) {
