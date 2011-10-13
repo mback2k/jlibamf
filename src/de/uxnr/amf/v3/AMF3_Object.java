@@ -38,6 +38,9 @@ public abstract class AMF3_Object extends AMF3_Type {
 
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
+		this.writeFields(this.getClass(), this.innerObject.getData());
+
+		// TODO Figure out a way to cleanup the different flows for read and write
 		this.innerObject.write(context, output);
 	}
 
@@ -46,6 +49,37 @@ public abstract class AMF3_Object extends AMF3_Type {
 		this.readFields(this.getClass(), this.innerObject.getData());
 
 		return this;
+	}
+
+	@SuppressWarnings("unused")
+	protected final void writeFields(Class type, Map<UTF8, AMF3_Type> fields) throws IOException {
+		try {
+			for (Field field : type.getDeclaredFields()) {
+				int modifiers = field.getModifiers();
+				if ((modifiers & (Modifier.STATIC | Modifier.TRANSIENT)) != 0)
+					continue;
+
+				Field modifiersField = Field.class.getDeclaredField("modifiers");
+				modifiersField.setAccessible(true);
+				modifiersField.setInt(field, (modifiers & ~Modifier.PRIVATE & ~Modifier.PROTECTED) | Modifier.PUBLIC);
+
+				java.lang.String fieldName = field.getName();
+				java.lang.Object fieldValue = field.get(this);
+
+				try {
+					// TODO Implement writeFields
+
+				} catch (ClassCastException e) {
+					continue;
+
+				} finally {
+					modifiersField.setInt(field, modifiers);
+					modifiersField.setAccessible(false);
+				}
+			}
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
 	}
 
 	protected final void readFields(Class type, Map<UTF8, AMF3_Type> fields) throws IOException {
