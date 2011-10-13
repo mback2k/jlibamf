@@ -72,7 +72,17 @@ public class ByteArray extends AMF3_Type {
 
 	@Override
 	public java.lang.String toString() {
-		return "ByteArray";
+		StringBuilder sb = new StringBuilder();
+		sb.append("ByteArray '");
+		for (int i = 0; i < this.value.length; i++) {
+			int value = this.value[i];
+			if (value < 10) {
+				sb.append('0');
+			}
+			sb.append(java.lang.Integer.toHexString(value));
+		}
+		sb.append("'");
+		return sb.toString();
 	}
 
 	@Override
