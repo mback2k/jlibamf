@@ -9,7 +9,6 @@ import de.uxnr.amf.AMF_Context;
 import de.uxnr.amf.AMF_Type;
 import de.uxnr.amf.flex.base.AbstractMessageBase;
 import de.uxnr.amf.v3.AMF3_Type;
-import de.uxnr.amf.v3.type.ByteArray;
 
 public abstract class AbstractMessage extends AbstractMessageBase {
 	private AMF3_Type body;
@@ -19,8 +18,8 @@ public abstract class AbstractMessage extends AbstractMessageBase {
 	private String messageId;
 	private double timestamp;
 	private double timeToLive;
-	private ByteArray clientUuid;
-	private ByteArray messageUuid;
+	private int[] clientUuid;
+	private int[] messageUuid;
 
 	public AMF3_Type getBody() {
 		return this.body;
@@ -50,11 +49,11 @@ public abstract class AbstractMessage extends AbstractMessageBase {
 		return this.timeToLive;
 	}
 
-	public ByteArray getClientUuid() {
+	public int[] getClientUuid() {
 		return this.clientUuid;
 	}
 
-	public ByteArray getMessageUuid() {
+	public int[] getMessageUuid() {
 		return this.messageUuid;
 	}
 

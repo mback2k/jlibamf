@@ -7,17 +7,16 @@ import java.io.IOException;
 import de.uxnr.amf.AMF_Context;
 import de.uxnr.amf.AMF_Type;
 import de.uxnr.amf.flex.base.AsyncMessageBase;
-import de.uxnr.amf.v3.type.ByteArray;
 
 public class AsyncMessage extends AsyncMessageBase {
 	private String correlationId;
-	private ByteArray correlationUuid;
+	private int[] correlationUuid;
 
 	public String getCorrelationId() {
 		return this.correlationId;
 	}
 
-	public ByteArray getCorrelationUuid() {
+	public int[] getCorrelationUuid() {
 		return this.correlationUuid;
 	}
 

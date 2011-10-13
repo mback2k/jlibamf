@@ -16,6 +16,7 @@ import de.uxnr.amf.AMF_Context;
 import de.uxnr.amf.AMF_Type;
 import de.uxnr.amf.v3.base.UTF8;
 import de.uxnr.amf.v3.type.Array;
+import de.uxnr.amf.v3.type.ByteArray;
 import de.uxnr.amf.v3.type.Double;
 import de.uxnr.amf.v3.type.False;
 import de.uxnr.amf.v3.type.Integer;
@@ -169,6 +170,16 @@ public abstract class AMF3_Object extends AMF3_Type {
 
 						} else if (data instanceof False) {
 							value = false;
+						}
+
+						this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
+						field.set(this, value);
+
+					} else if (field.getType() == int[].class) {
+						int[] value = null;
+
+						if (data instanceof ByteArray) {
+							value = ((ByteArray) data).get();
 						}
 
 						this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
