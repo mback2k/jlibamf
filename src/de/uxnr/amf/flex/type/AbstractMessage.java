@@ -17,8 +17,8 @@ public abstract class AbstractMessage extends AbstractMessageBase {
 	private String destination;
 	private Collection<AMF3_Type> headers;
 	private String messageId;
-	private Double timestamp;
-	private Double timeToLive;
+	private double timestamp;
+	private double timeToLive;
 	private ByteArray clientUuid;
 	private ByteArray messageUuid;
 
@@ -42,11 +42,11 @@ public abstract class AbstractMessage extends AbstractMessageBase {
 		return this.messageId;
 	}
 
-	public Double getTimestamp() {
+	public double getTimestamp() {
 		return this.timestamp;
 	}
 
-	public Double getTimeToLive() {
+	public double getTimeToLive() {
 		return this.timeToLive;
 	}
 

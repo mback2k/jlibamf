@@ -9,9 +9,9 @@ import de.uxnr.amf.AMF_Type;
 import de.uxnr.amf.flex.base.CommandMessageBase;
 
 public class CommandMessage extends CommandMessageBase {
-	private Integer operation;
+	private int operation;
 
-	public Integer getOperation() {
+	public int getOperation() {
 		return this.operation;
 	}
 

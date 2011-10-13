@@ -108,6 +108,16 @@ public abstract class AMF3_Object extends AMF3_Type {
 						this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
 						field.set(this, value);
 
+					} else if (field.getType() == int.class) {
+						int value = 0;
+
+						if (data instanceof Integer) {
+							value = ((Integer) data).get();
+						}
+
+						this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
+						field.set(this, value);
+
 					} else if (field.getType() == java.lang.Integer.class) {
 						java.lang.Integer value = null;
 
@@ -118,11 +128,34 @@ public abstract class AMF3_Object extends AMF3_Type {
 						this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
 						field.set(this, value);
 
+					} else if (field.getType() == double.class) {
+						double value = 0;
+
+						if (data instanceof Double) {
+							value = ((Double) data).get();
+						}
+
+						this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
+						field.set(this, value);
+
 					} else if (field.getType() == java.lang.Double.class) {
 						java.lang.Double value = null;
 
 						if (data instanceof Double) {
 							value = ((Double) data).get();
+						}
+
+						this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
+						field.set(this, value);
+
+					} else if (field.getType() == boolean.class) {
+						boolean value = false;
+
+						if (data instanceof True) {
+							value = true;
+
+						} else if (data instanceof False) {
+							value = false;
 						}
 
 						this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
