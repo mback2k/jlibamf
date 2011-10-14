@@ -10,7 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import de.uxnr.amf.AMF;
-import de.uxnr.amf.AMF_Context;
+import de.uxnr.amf.Context;
 import de.uxnr.amf.v3.base.U29;
 import de.uxnr.amf.v3.type.Integer;
 
@@ -35,7 +35,7 @@ public class AMFTest {
 	}
 
 	public static void test(int value, boolean signed) throws IOException {
-		AMF_Context context = new AMF_Context();
+		Context context = new Context();
 		Integer test = new Integer();
 		test.signed = signed;
 

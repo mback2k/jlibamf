@@ -1,5 +1,5 @@
 package de.uxnr.amf.v0.type;
 
-public class Unsupported {
+public class ObjectEnd {
 
 }

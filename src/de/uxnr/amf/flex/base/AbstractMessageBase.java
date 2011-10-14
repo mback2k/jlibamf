@@ -11,7 +11,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
-import de.uxnr.amf.AMF_Context;
+import de.uxnr.amf.Context;
 import de.uxnr.amf.AMF_Type;
 import de.uxnr.amf.v0.base.U8;
 import de.uxnr.amf.v3.AMF3_Object;
@@ -40,18 +40,18 @@ public abstract class AbstractMessageBase extends AMF3_Object {
 	private transient Integer hashCode = null;
 
 	@Override
-	public void write(AMF_Context context, DataOutputStream output) throws IOException {
+	public void write(Context context, DataOutputStream output) throws IOException {
 		this.writeFields(context, output, AbstractMessageBase.names);
 	}
 
 	@Override
-	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
+	public AMF_Type read(Context context, DataInputStream input) throws IOException {
 		this.readFields(context, input, AbstractMessageBase.names);
 
 		return this;
 	}
 
-	protected void writeFields(AMF_Context context, DataOutputStream output, UTF8[][] names) throws IOException {
+	protected void writeFields(Context context, DataOutputStream output, UTF8[][] names) throws IOException {
 		List<AMF3_Type> values = new Vector<AMF3_Type>();
 		List<Integer> flags = new Vector<Integer>();
 
@@ -89,7 +89,7 @@ public abstract class AbstractMessageBase extends AMF3_Object {
 		}
 	}
 
-	protected void readFields(AMF_Context context, DataInputStream input, UTF8[][] names) throws IOException {
+	protected void readFields(Context context, DataInputStream input, UTF8[][] names) throws IOException {
 		List<Integer> flags = this.readFlags(context, input);
 
 		int index = 0;
@@ -108,7 +108,7 @@ public abstract class AbstractMessageBase extends AMF3_Object {
 		this.hashCode = null;
 	}
 
-	private void writeFlags(AMF_Context context, DataOutputStream output, List<Integer> flags) throws IOException {
+	private void writeFlags(Context context, DataOutputStream output, List<Integer> flags) throws IOException {
 		U8 ubyte = new U8(0x00);
 		for (int index = 0; index < flags.size(); index++) {
 			if (index == flags.size() - 1) {
@@ -120,7 +120,7 @@ public abstract class AbstractMessageBase extends AMF3_Object {
 		}
 	}
 
-	private List<Integer> readFlags(AMF_Context context, DataInputStream input) throws IOException {
+	private List<Integer> readFlags(Context context, DataInputStream input) throws IOException {
 		List<Integer> flags = new Vector<Integer>();
 		U8 ubyte = new U8(0x80);
 		do {

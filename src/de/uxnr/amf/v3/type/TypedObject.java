@@ -1,10 +1,10 @@
-package de.uxnr.amf.v0.type;
+package de.uxnr.amf.v3.type;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class TypedObject extends LinkedHashMap<String, Object> {
-	private static final long serialVersionUID = -8470834700589158588L;
+	private static final long serialVersionUID = -8470834700689158588L;
 
 	private final String className;
 

@@ -5,7 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 
-import de.uxnr.amf.AMF_Context;
+import de.uxnr.amf.Context;
 import de.uxnr.amf.AMF_Type;
 import de.uxnr.amf.flex.base.AbstractMessageBase;
 import de.uxnr.amf.v3.AMF3_Type;
@@ -58,14 +58,14 @@ public abstract class AbstractMessage extends AbstractMessageBase {
 	}
 
 	@Override
-	public void write(AMF_Context context, DataOutputStream output) throws IOException {
+	public void write(Context context, DataOutputStream output) throws IOException {
 		// TODO Write object fields
 
 		super.write(context, output);
 	}
 
 	@Override
-	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
+	public AMF_Type read(Context context, DataInputStream input) throws IOException {
 		super.read(context, input);
 
 		this.readFields(AbstractMessage.class, this.getData());

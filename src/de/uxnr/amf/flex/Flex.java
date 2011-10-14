@@ -15,9 +15,9 @@ public class Flex {
 	public static final UTF8 FLEX_OBJECT_PROXY				= new UTF8("flex.messaging.io.ObjectProxy");
 
 	public static void register() {
-		Object.registerExternalClass(FLEX_ASYNC_MESSAGE,			AsyncMessage.class);
-		Object.registerExternalClass(FLEX_COMMAND_MESSAGE,			CommandMessage.class);
-		Object.registerExternalClass(FLEX_ACKNOWLEDGE_MESSAGE,		AcknowledgeMessage.class);
+		Object.registerExternalizableClass(FLEX_ASYNC_MESSAGE,			AsyncMessage.class);
+		Object.registerExternalizableClass(FLEX_COMMAND_MESSAGE,			CommandMessage.class);
+		Object.registerExternalizableClass(FLEX_ACKNOWLEDGE_MESSAGE,		AcknowledgeMessage.class);
 
 		Object.registerInternalClass(FLEX_ARRAY_COLLECTION,			Array.class);
 		Object.registerInternalClass(FLEX_OBJECT_PROXY,				Object.class);

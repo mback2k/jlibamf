@@ -1,35 +1,33 @@
-package de.uxnr.amf.v3;
+package de.uxnr.amf.v3.type;
 
 import java.util.List;
 import java.util.Vector;
 
-import de.uxnr.amf.v3.base.UTF8;
+public class ObjectTrait {
+	private final List<String> names = new Vector<String>();
 
-public class AMF3_Trait {
-	private final List<UTF8> names = new Vector<UTF8>();
-
-	private UTF8 className = new UTF8();
+	private String className = new String();
 
 	private boolean dynamic = false;
 	private boolean externalizable = false;
 
-	public List<UTF8> getNames() {
+	public List<String> getNames() {
 		return this.names;
 	}
 
-	public void addName(UTF8 name) {
+	public void addName(String name) {
 		this.names.add(name);
 	}
 
-	public boolean hasName(UTF8 name) {
+	public boolean hasName(String name) {
 		return this.names.contains(name);
 	}
 
-	public UTF8 getClassName() {
+	public String getClassName() {
 		return this.className;
 	}
 
-	public void setClassName(UTF8 className) {
+	public void setClassName(String className) {
 		this.className = className;
 	}
 
@@ -63,7 +61,7 @@ public class AMF3_Trait {
 		if (obj == null)
 			return false;
 
-		if (!(obj instanceof AMF3_Trait))
+		if (!(obj instanceof ObjectTrait))
 			return false;
 
 		if (this.hashCode() != obj.hashCode())
