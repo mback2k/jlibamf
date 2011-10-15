@@ -26,8 +26,22 @@ public class CommandMessage extends CommandMessageBase {
 	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
 		super.read(context, input);
 
-		this.readFields(CommandMessage.class, this.getData());
+		this.readFields(CommandMessage.class, this.getObjectData());
 
 		return this;
+	}
+
+	@Override
+	public void writeExternal(AMF_Context context, DataOutputStream output) throws IOException {
+		// TODO Write object fields
+
+		super.writeExternal(context, output);
+	}
+
+	@Override
+	public void readExternal(AMF_Context context, DataInputStream input) throws IOException {
+		super.readExternal(context, input);
+
+		this.readFields(CommandMessage.class, this.getObjectData());
 	}
 }

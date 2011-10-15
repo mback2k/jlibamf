@@ -3,22 +3,16 @@ package de.uxnr.amf.flex.base;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.Vector;
 
 import de.uxnr.amf.AMF_Context;
-import de.uxnr.amf.AMF_Type;
 import de.uxnr.amf.v0.base.U8;
-import de.uxnr.amf.v3.AMF3_Object;
+import de.uxnr.amf.v3.AMF3_Externalizable;
 import de.uxnr.amf.v3.AMF3_Type;
 import de.uxnr.amf.v3.base.UTF8;
 
-public abstract class AbstractMessageBase extends AMF3_Object {
+public abstract class AbstractMessageBase extends AMF3_Externalizable {
 	private static final UTF8[][] names = new UTF8[][] {
 		{
 			new UTF8("body"),
@@ -35,20 +29,14 @@ public abstract class AbstractMessageBase extends AMF3_Object {
 		}
 	};
 
-	private transient final Map<UTF8, AMF3_Type> value = new LinkedHashMap<UTF8, AMF3_Type>();
-
-	private transient Integer hashCode = null;
-
 	@Override
-	public void write(AMF_Context context, DataOutputStream output) throws IOException {
+	public void writeExternal(AMF_Context context, DataOutputStream output) throws IOException {
 		this.writeFields(context, output, AbstractMessageBase.names);
 	}
 
 	@Override
-	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
+	public void readExternal(AMF_Context context, DataInputStream input) throws IOException {
 		this.readFields(context, input, AbstractMessageBase.names);
-
-		return this;
 	}
 
 	protected void writeFields(AMF_Context context, DataOutputStream output, UTF8[][] names) throws IOException {
@@ -59,7 +47,7 @@ public abstract class AbstractMessageBase extends AMF3_Object {
 			int flag = 0;
 
 			for (int index = 0; index < name.length; index++) {
-				AMF3_Type value = this.value.get(name[index]);
+				AMF3_Type value = this.get(name[index]);
 
 				if (value != null) {
 					values.add(value);
@@ -67,7 +55,7 @@ public abstract class AbstractMessageBase extends AMF3_Object {
 			}
 
 			for (int index = name.length - 1; index >= 0; index--) {
-				AMF3_Type value = this.value.get(name[index]);
+				AMF3_Type value = this.get(name[index]);
 
 				flag <<= 1;
 				if (value != null) {
@@ -99,13 +87,11 @@ public abstract class AbstractMessageBase extends AMF3_Object {
 			if (index < names.length) {
 				for (UTF8 name : names[index++]) {
 					if (((flag >> (reserved++)) & 1) == 1) {
-						this.value.put(name, AMF3_Type.readType(context, input));
+						this.put(name, AMF3_Type.readType(context, input));
 					}
 				}
 			}
 		}
-
-		this.hashCode = null;
 	}
 
 	private void writeFlags(AMF_Context context, DataOutputStream output, List<Integer> flags) throws IOException {
@@ -130,60 +116,13 @@ public abstract class AbstractMessageBase extends AMF3_Object {
 		return flags;
 	}
 
-	public Map<UTF8, AMF3_Type> getData() {
-		return this.value;
-	}
-
-	public Set<UTF8> keySet() {
-		return this.value.keySet();
-	}
-
-	public Set<Entry<UTF8, AMF3_Type>> entrySet() {
-		return this.value.entrySet();
-	}
-
-	public Collection<AMF3_Type> values() {
-		return this.value.values();
-	}
-
-	public void put(UTF8 key, AMF3_Type value) {
-		this.hashCode = null;
-		this.value.put(key, value);
-	}
-
-	public void put(String key, AMF3_Type value) {
-		this.put(new UTF8(key), value);
-	}
-
-	public void set(UTF8 key, AMF3_Type value) {
-		this.put(key, value);
-	}
-
-	public void set(String key, AMF3_Type value) {
-		this.put(new UTF8(key), value);
-	}
-
-	public AMF3_Type get(UTF8 key) {
-		return this.value.get(key);
-	}
-
-	public AMF3_Type get(String key) {
-		return this.get(new UTF8(key));
-	}
-
+	@Override
 	public String getClassName() {
 		return this.getClass().getSimpleName();
 	}
 
 	@Override
 	public String toString() {
-		return "Flex '" + this.getClassName() + "' " + this.value;
-	}
-
-	@Override
-	public int hashCode() {
-		if (this.hashCode != null)
-			return this.hashCode;
-		return this.hashCode = this.getClass().hashCode() ^ this.value.hashCode();
+		return "Flex " + super.toString();
 	}
 }

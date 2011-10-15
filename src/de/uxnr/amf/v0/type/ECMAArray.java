@@ -54,7 +54,7 @@ public class ECMAArray extends AMF0_Type {
 		return this;
 	}
 
-	public Map<UTF8, AMF0_Type> getData() {
+	public Map<UTF8, AMF0_Type> getArrayData() {
 		return this.value;
 	}
 

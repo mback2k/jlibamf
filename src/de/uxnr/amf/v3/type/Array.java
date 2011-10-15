@@ -88,7 +88,7 @@ public class Array extends AMF3_Type {
 		return this;
 	}
 
-	public Map<UTF8, AMF3_Type> getData() {
+	public Map<UTF8, AMF3_Type> getArrayData() {
 		return this.value1;
 	}
 
