@@ -128,4 +128,8 @@ public class AMF {
 	public static void registerClass(String className, Class<? extends AMF3_Object> classType) {
 		Object.registerClass(new UTF8(className), classType);
 	}
+
+	public static void registerClassMapping(String remoteName, String localName) {
+		Object.registerClassMapping(remoteName, localName);
+	}
 }

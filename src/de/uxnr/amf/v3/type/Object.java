@@ -21,7 +21,8 @@ import de.uxnr.amf.v3.base.U29;
 import de.uxnr.amf.v3.base.UTF8;
 
 public class Object extends AMF3_Type {
-	private static final Map<UTF8, Class<? extends Object>> classes = new HashMap<UTF8, Class<? extends Object>>();
+	private static final Map<UTF8, Class<? extends AMF3_Object>> classes = new HashMap<UTF8, Class<? extends AMF3_Object>>();
+	private static final Map<java.lang.String, java.lang.String> mappings = new HashMap<java.lang.String, java.lang.String>();
 
 	private static final UTF8 EMPTY_KEY = new UTF8();
 
@@ -40,48 +41,72 @@ public class Object extends AMF3_Type {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
-		AMF3_Type object = this.readTrait(context, input);
+		AMF3_Type type = this.readTrait(context, input);
 
-		if (object == this) {
+		if (type == this) {
 			UTF8 className = this.trait.getClassName();
 			boolean isExternalizable = this.trait.isExternalizable();
 
+			Class<? extends AMF3_Object> classType = null;
+
+			// Search for a custom class
 			if (Object.classes.containsKey(className)) {
+				classType = Object.classes.get(className);
+
+			} else {
+				for (Entry<java.lang.String, java.lang.String> entry : Object.mappings.entrySet()) {
+					java.lang.String searchName = className.get().replace(entry.getKey(), entry.getValue());
+
+					try {
+						classType = (Class<? extends AMF3_Object>) Thread.currentThread().getContextClassLoader().loadClass(searchName);
+						Object.registerClass(className, classType);
+						break;
+					} catch (ClassNotFoundException e) {
+						continue;
+					}
+				}
+			}
+
+			// Create new instance of custom class
+			if (classType != null) {
 				try {
-					object = Object.classes.get(className).newInstance();
+					Object object = classType.newInstance();
+					object.trait = this.trait;
+					type = object;
 				} catch (Exception e) {
 					throw new IOException(e);
 				}
+			}
 
-				((Object) object).trait = this.trait;
-
-			} else if (isExternalizable) {
+			// Externalizable class not found
+			if (type == this && isExternalizable) {
 				throw new RuntimeException("Unknown externalizable class "+className);
 			}
 
-			context.addAMF3Object(object);
+			context.addAMF3Object(type);
 
 			if (isExternalizable) {
-				if (object instanceof AMF3_Externalizable) {
-					((AMF3_Externalizable) object).readExternal(context, input);
+				if (type instanceof AMF3_Externalizable) {
+					((AMF3_Externalizable) type).readExternal(context, input);
 
 				} else {
 					throw new RuntimeException("Class "+className+" is not externalizable");
 				}
 
-			} else if (object instanceof AMF3_Object) {
-				((AMF3_Object) object).read(context, input);
+			} else if (type instanceof AMF3_Object) {
+				((AMF3_Object) type).read(context, input);
 
 			} else {
-				((Object) object).readAttributes(context, input);
+				((Object) type).readAttributes(context, input);
 			}
 
 			this.hashCode = null;
 		}
 
-		return object;
+		return type;
 	}
 
 	public final boolean writeTrait(AMF_Context context, DataOutputStream output) throws IOException {
@@ -282,5 +307,9 @@ public class Object extends AMF3_Type {
 
 	public static void registerClass(UTF8 className, Class<? extends AMF3_Object> classType) {
 		Object.classes.put(className, classType);
+	}
+
+	public static void registerClassMapping(java.lang.String remoteName, java.lang.String localName) {
+		Object.mappings.put(remoteName, localName);
 	}
 }
