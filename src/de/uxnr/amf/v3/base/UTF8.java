@@ -64,7 +64,7 @@ public class UTF8 extends AMF3_Type {
 		byte[] buf = new byte[length];
 
 		if (input.read(buf) == length)
-			this.value = new String(buf);
+			this.value = new String(buf).intern();
 		else
 			throw new IOException("Not enough data to read UTF8");
 
