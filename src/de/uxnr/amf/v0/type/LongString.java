@@ -7,7 +7,8 @@ import de.uxnr.amf.AMF_Context;
 import de.uxnr.amf.v0.base.UTF8long;
 
 public class LongString extends UTF8long {
-	public LongString() { }
+	public LongString() {
+	}
 
 	public LongString(java.lang.String value) {
 		this.set(value);

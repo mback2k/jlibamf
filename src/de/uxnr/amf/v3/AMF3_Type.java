@@ -43,7 +43,7 @@ abstract public class AMF3_Type extends AMF0_Type {
 		AMF3_Type value = null;
 
 		if (!AMF3_Type.types.containsKey(type)) {
-			throw new RuntimeException("Unsupported type "+type);
+			throw new RuntimeException("Unsupported type " + type);
 		}
 
 		try {

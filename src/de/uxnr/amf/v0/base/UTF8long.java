@@ -13,7 +13,8 @@ import de.uxnr.amf.v0.AMF0_Type;
 public class UTF8long extends AMF0_Type {
 	private String value = "";
 
-	public UTF8long() { }
+	public UTF8long() {
+	}
 
 	public UTF8long(String value) {
 		this.set(value);

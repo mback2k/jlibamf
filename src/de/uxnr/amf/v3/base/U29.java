@@ -17,7 +17,8 @@ public class U29 extends AMF3_Type {
 
 	public boolean signed = false;
 
-	public U29() { }
+	public U29() {
+	}
 
 	public U29(int value) {
 		this.set(value);

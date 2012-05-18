@@ -13,7 +13,8 @@ import de.uxnr.amf.v3.AMF3_Type;
 public class UTF8 extends AMF3_Type {
 	private String value = "";
 
-	public UTF8() { }
+	public UTF8() {
+	}
 
 	public UTF8(String value) {
 		this.set(value);

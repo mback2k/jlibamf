@@ -15,7 +15,8 @@ public class ByteArray extends AMF3_Type {
 
 	private java.lang.Integer hashCode = null;
 
-	public ByteArray() { }
+	public ByteArray() {
+	}
 
 	public ByteArray(int[] value) {
 		this.value = value;

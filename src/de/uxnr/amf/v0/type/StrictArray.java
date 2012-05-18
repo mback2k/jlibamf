@@ -17,7 +17,8 @@ public class StrictArray extends AMF0_Type {
 
 	private Integer hashCode = null;
 
-	public StrictArray() { }
+	public StrictArray() {
+	}
 
 	public StrictArray(AMF_Context context, DataInputStream input) throws IOException {
 		this.read(context, input);

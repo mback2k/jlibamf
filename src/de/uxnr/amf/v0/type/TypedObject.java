@@ -11,7 +11,8 @@ import de.uxnr.amf.v0.base.UTF8;
 public class TypedObject extends Object {
 	private UTF8 className = new UTF8();
 
-	public TypedObject() { }
+	public TypedObject() {
+	}
 
 	public TypedObject(AMF_Context context, DataInputStream input) throws IOException {
 		this.read(context, input);
@@ -37,7 +38,7 @@ public class TypedObject extends Object {
 
 	@Override
 	public java.lang.String toString() {
-		return "'"+this.className.toString()+"' "+super.toString();
+		return "'" + this.className.toString() + "' " + super.toString();
 	}
 
 	@Override

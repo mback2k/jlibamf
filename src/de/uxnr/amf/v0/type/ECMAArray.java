@@ -19,7 +19,8 @@ public class ECMAArray extends AMF0_Type {
 
 	private Integer hashCode = null;
 
-	public ECMAArray() { }
+	public ECMAArray() {
+	}
 
 	public ECMAArray(AMF_Context context, DataInputStream input) throws IOException {
 		this.read(context, input);

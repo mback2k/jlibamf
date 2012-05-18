@@ -12,7 +12,8 @@ import de.uxnr.amf.v0.base.U16;
 public class Reference extends AMF0_Type {
 	private AMF0_Type value = null;
 
-	public Reference() { }
+	public Reference() {
+	}
 
 	public Reference(AMF0_Type value) {
 		this.value = value;

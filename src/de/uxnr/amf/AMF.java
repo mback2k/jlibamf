@@ -26,7 +26,8 @@ public class AMF {
 	private final List<AMF_Header> headers = new Vector<AMF_Header>();
 	private final List<AMF_Message> messages = new Vector<AMF_Message>();
 
-	public AMF() { }
+	public AMF() {
+	}
 
 	public AMF(InputStream input) throws IOException {
 		this.read(input);

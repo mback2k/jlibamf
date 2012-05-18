@@ -32,7 +32,8 @@ public class Object extends AMF3_Type {
 
 	private java.lang.Integer hashCode = null;
 
-	public Object() { }
+	public Object() {
+	}
 
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
@@ -83,7 +84,7 @@ public class Object extends AMF3_Type {
 
 			// Externalizable class not found
 			if (type == this && isExternalizable) {
-				throw new RuntimeException("Unknown externalizable class "+className);
+				throw new RuntimeException("Unknown externalizable class " + className);
 			}
 
 			context.addAMF3Object(type);
@@ -93,7 +94,7 @@ public class Object extends AMF3_Type {
 					((AMF3_Externalizable) type).readExternal(context, input);
 
 				} else {
-					throw new RuntimeException("Class "+className+" is not externalizable");
+					throw new RuntimeException("Class " + className + " is not externalizable");
 				}
 
 			} else if (type instanceof AMF3_Object) {
@@ -146,7 +147,7 @@ public class Object extends AMF3_Type {
 		return true;
 	}
 
-	public final  AMF3_Type readTrait(AMF_Context context, DataInputStream input) throws IOException {
+	public final AMF3_Type readTrait(AMF_Context context, DataInputStream input) throws IOException {
 		U29 flag = new U29(context, input);
 		int flags = flag.get();
 

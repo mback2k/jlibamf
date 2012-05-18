@@ -11,7 +11,8 @@ import de.uxnr.amf.v0.AMF0_Type;
 public class U16 extends AMF0_Type {
 	private int value = 0;
 
-	public U16() { }
+	public U16() {
+	}
 
 	public U16(int value) {
 		this.set(value);

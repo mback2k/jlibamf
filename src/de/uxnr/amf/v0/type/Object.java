@@ -21,7 +21,8 @@ public class Object extends AMF0_Type {
 
 	private Integer hashCode = null;
 
-	public Object() { }
+	public Object() {
+	}
 
 	public Object(AMF_Context context, DataInputStream input) throws IOException {
 		this.read(context, input);
@@ -114,5 +115,6 @@ public class Object extends AMF0_Type {
 		return this.hashCode = this.value.hashCode();
 	}
 
-	public static class ObjectEnd extends EmptyType {}
+	public static class ObjectEnd extends EmptyType {
+	}
 }
