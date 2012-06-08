@@ -63,6 +63,7 @@ public abstract class AMF3_Object extends Object {
 
 				try {
 					AMF3_Type data = fields.get(new UTF8(fieldName));
+					java.lang.Object newValue = null;
 
 					if (data instanceof Null || data instanceof Undefined) {
 						if (java.lang.Object.class.isAssignableFrom(field.getType())) {
@@ -72,159 +73,30 @@ public abstract class AMF3_Object extends Object {
 					}
 
 					if (field.getType() == java.lang.String.class) {
-						java.lang.String value = null;
-
-						if (data instanceof String) {
-							value = ((String) data).get();
-						}
-
-						this.firePropertyChange(fieldName, fieldValue, value);
-						field.set(this, value);
-
-					} else if (field.getType() == int.class) {
-						int value = 0;
-
-						if (data instanceof Integer) {
-							value = ((Integer) data).get();
-						}
-
-						this.firePropertyChange(fieldName, fieldValue, value);
-						field.set(this, value);
-
-					} else if (field.getType() == java.lang.Integer.class) {
-						java.lang.Integer value = null;
-
-						if (data instanceof Integer) {
-							value = ((Integer) data).get();
-						}
-
-						this.firePropertyChange(fieldName, fieldValue, value);
-						field.set(this, value);
-
-					} else if (field.getType() == double.class) {
-						double value = 0;
-
-						if (data instanceof Double) {
-							value = ((Double) data).get();
-						}
-
-						this.firePropertyChange(fieldName, fieldValue, value);
-						field.set(this, value);
-
-					} else if (field.getType() == java.lang.Double.class) {
-						java.lang.Double value = null;
-
-						if (data instanceof Double) {
-							value = ((Double) data).get();
-						}
-
-						this.firePropertyChange(fieldName, fieldValue, value);
-						field.set(this, value);
-
-					} else if (field.getType() == boolean.class) {
-						boolean value = false;
-
-						if (data instanceof True) {
-							value = true;
-
-						} else if (data instanceof False) {
-							value = false;
-						}
-
-						this.firePropertyChange(fieldName, fieldValue, value);
-						field.set(this, value);
-
-					} else if (field.getType() == java.lang.Boolean.class) {
-						java.lang.Boolean value = null;
-
-						if (data instanceof True) {
-							value = true;
-
-						} else if (data instanceof False) {
-							value = false;
-						}
-
-						this.firePropertyChange(fieldName, fieldValue, value);
-						field.set(this, value);
-
+						newValue = this.readStringField(data);
+					} else if (field.getType() == java.lang.Integer.class || field.getType() == int.class) {
+						newValue = this.readIntegerField(data);
+					} else if (field.getType() == java.lang.Double.class || field.getType() == double.class) {
+						newValue = this.readDoubleField(data);
+					} else if (field.getType() == java.lang.Boolean.class || field.getType() == boolean.class) {
+						newValue = this.readBooleanField(data);
 					} else if (field.getType() == int[].class) {
-						int[] value = null;
-
-						if (data instanceof ByteArray) {
-							value = ((ByteArray) data).get();
-						}
-
-						this.firePropertyChange(fieldName, fieldValue, value);
-						field.set(this, value);
-
+						newValue = this.readByteArrayField(data);
 					} else if (field.getType() == ObjectProxy.class) {
-						ObjectProxy value = null;
-
-						if (data instanceof ObjectProxy) {
-							value = (ObjectProxy) data;
-						}
-
-						this.firePropertyChange(fieldName, fieldValue, value);
-						field.set(this, value);
-
+						newValue = this.readObjectProxyField(data);
 					} else if (field.getType() == ArrayCollection.class) {
-						ArrayCollection value = null;
-
-						if (data instanceof ArrayCollection) {
-							value = (ArrayCollection) data;
-						}
-
-						this.firePropertyChange(fieldName, fieldValue, value);
-						field.set(this, value);
-
+						newValue = this.readArrayCollectionField(data);
 					} else if (AMF3_Type.class.isAssignableFrom(field.getType())) {
-						AMF3_Type value = null;
-
-						if (data instanceof AMF3_Type) {
-							value = data;
-						}
-
-						this.firePropertyChange(fieldName, fieldValue, value);
-						field.set(this, value);
-
+						newValue = this.readTypeField(data);
 					} else if (Collection.class.isAssignableFrom(field.getType())) {
-						Collection<AMF3_Type> value = null;
-
-						if (data instanceof Array) {
-							value = ((Array) data).values();
-
-						} else if (data instanceof ArrayCollection) {
-							value = ((ArrayCollection) data).getArray().values();
-
-						} else if (data instanceof Object) {
-							value = ((Object) data).values();
-
-						} else if (data instanceof ObjectProxy) {
-							value = ((ObjectProxy) data).getObject().values();
-						}
-
-						this.firePropertyChange(fieldName, fieldValue, value);
-						field.set(this, value);
-
+						newValue = this.readCollectionField(data);
 					} else if (Map.class.isAssignableFrom(field.getType())) {
-						Map<java.lang.String, AMF3_Type> value = null;
+						newValue = this.readMapField(data);
+					}
 
-						if (data instanceof Array) {
-							value = this.convertMap(((Array) data).getArrayData());
-
-						} else if (data instanceof ArrayCollection) {
-							value = this.convertMap(((ArrayCollection) data).getArray().getArrayData());
-
-						} else if (data instanceof Object) {
-							value = this.convertMap(((Object) data).getObjectData());
-
-						} else if (data instanceof ObjectProxy) {
-							value = this.convertMap(((ObjectProxy) data).getObject().getObjectData());
-						}
-
-						this.firePropertyChange(fieldName, fieldValue, value);
-						field.set(this, value);
-
+					if (newValue != null) {
+						field.set(this, newValue);
+						this.firePropertyChange(fieldName, fieldValue, newValue);
 					}
 
 				} catch (ClassCastException e) {
@@ -238,6 +110,100 @@ public abstract class AMF3_Object extends Object {
 		} catch (Exception e) {
 			throw new IOException(e);
 		}
+	}
+
+	private final java.lang.Object readStringField(AMF3_Type data) {
+		java.lang.String value = null;
+		if (data instanceof String) {
+			value = ((String) data).get();
+		}
+		return value;
+	}
+
+	private final java.lang.Object readIntegerField(AMF3_Type data) {
+		java.lang.Integer value = null;
+		if (data instanceof Integer) {
+			value = ((Integer) data).get();
+		}
+		return value;
+	}
+
+	private final java.lang.Object readDoubleField(AMF3_Type data) {
+		java.lang.Double value = null;
+		if (data instanceof Double) {
+			value = ((Double) data).get();
+		}
+		return value;
+	}
+
+	private final java.lang.Object readBooleanField(AMF3_Type data) {
+		java.lang.Boolean value = null;
+		if (data instanceof True) {
+			value = true;
+		} else if (data instanceof False) {
+			value = false;
+		}
+		return value;
+	}
+
+	private final java.lang.Object readByteArrayField(AMF3_Type data) {
+		int[] value = null;
+		if (data instanceof ByteArray) {
+			value = ((ByteArray) data).get();
+		}
+		return value;
+	}
+
+	private final java.lang.Object readObjectProxyField(AMF3_Type data) {
+		ObjectProxy value = null;
+		if (data instanceof ObjectProxy) {
+			value = (ObjectProxy) data;
+		}
+		return value;
+	}
+
+	private final java.lang.Object readArrayCollectionField(AMF3_Type data) {
+		ArrayCollection value = null;
+		if (data instanceof ArrayCollection) {
+			value = (ArrayCollection) data;
+		}
+		return value;
+	}
+
+	private final java.lang.Object readTypeField(AMF3_Type data) {
+		AMF3_Type value = null;
+		if (data instanceof AMF3_Type) {
+			value = data;
+		}
+		return value;
+	}
+
+	private final java.lang.Object readCollectionField(AMF3_Type data) {
+		Collection<AMF3_Type> value = null;
+		if (data instanceof Array) {
+			value = ((Array) data).values();
+		} else if (data instanceof ArrayCollection) {
+			value = ((ArrayCollection) data).getArray().values();
+		} else if (data instanceof Object) {
+			value = ((Object) data).values();
+		} else if (data instanceof ObjectProxy) {
+			value = ((ObjectProxy) data).getObject().values();
+		}
+		return value;
+	}
+
+	private final java.lang.Object readMapField(AMF3_Type data) {
+		Map<java.lang.String, AMF3_Type> value = null;
+		if (data instanceof Array) {
+			value = this.convertMap(((Array) data).getArrayData());
+		} else if (data instanceof ArrayCollection) {
+			value = this.convertMap(((ArrayCollection) data).getArray().getArrayData());
+		} else if (data instanceof Object) {
+			value = this.convertMap(((Object) data).getObjectData());
+		} else if (data instanceof ObjectProxy) {
+			value = this.convertMap(((ObjectProxy) data).getObject().getObjectData());
+		}
+		return value;
 	}
 
 	private final Map<java.lang.String, AMF3_Type> convertMap(Map<UTF8, AMF3_Type> input) {
