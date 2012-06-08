@@ -11,7 +11,8 @@ import de.uxnr.amf.v0.AMF0_Type;
 public class U32 extends AMF0_Type {
 	private long value = 0;
 
-	public U32() { }
+	public U32() {
+	}
 
 	public U32(long value) {
 		this.set(value);

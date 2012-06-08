@@ -20,8 +20,22 @@ abstract public class AMF3_Type extends AMF0_Type {
 	}
 
 	public static void writeType(AMF_Context context, DataOutputStream output, AMF3_Type value) throws IOException {
-		AMF3_Type.classes.get(value.getClass()).write(context, output);
-		value.write(context, output);
+		if (value instanceof AMF3_Object) {
+			AMF3.AMF3_OBJECT_MARKER.write(context, output);
+
+			if (((AMF3_Object) value).writeTrait(context, output)) {
+				if (value instanceof AMF3_Externalizable) {
+					((AMF3_Externalizable) value).writeExternal(context, output);
+
+				} else {
+					((AMF3_Object) value).write(context, output);
+				}
+			}
+
+		} else {
+			AMF3_Type.classes.get(value.getClass()).write(context, output);
+			value.write(context, output);
+		}
 	}
 
 	public static AMF3_Type readType(AMF_Context context, DataInputStream input) throws IOException {
@@ -29,7 +43,7 @@ abstract public class AMF3_Type extends AMF0_Type {
 		AMF3_Type value = null;
 
 		if (!AMF3_Type.types.containsKey(type)) {
-			throw new RuntimeException("Unsupported type "+type);
+			throw new RuntimeException("Unsupported type " + type);
 		}
 
 		try {

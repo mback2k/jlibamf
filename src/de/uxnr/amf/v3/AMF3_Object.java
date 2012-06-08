@@ -14,6 +14,8 @@ import java.util.Map.Entry;
 
 import de.uxnr.amf.AMF_Context;
 import de.uxnr.amf.AMF_Type;
+import de.uxnr.amf.flex.type.ArrayCollection;
+import de.uxnr.amf.flex.type.ObjectProxy;
 import de.uxnr.amf.v3.base.UTF8;
 import de.uxnr.amf.v3.type.Array;
 import de.uxnr.amf.v3.type.ByteArray;
@@ -27,26 +29,19 @@ import de.uxnr.amf.v3.type.True;
 import de.uxnr.amf.v3.type.Undefined;
 
 @SuppressWarnings("rawtypes")
-public abstract class AMF3_Object extends AMF3_Type {
+public abstract class AMF3_Object extends Object {
 	private transient final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
-
-	private transient Object innerObject = null;
-
-	public final void setInnerObject(Object innerObject) {
-		this.innerObject = innerObject;
-	}
 
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
-		this.writeFields(this.getClass(), this.innerObject.getData());
-
-		// TODO Figure out a way to cleanup the different flows for read and write
-		this.innerObject.write(context, output);
+		this.writeFields(this.getClass(), this.getObjectData());
+		this.writeAttributes(context, output);
 	}
 
 	@Override
 	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
-		this.readFields(this.getClass(), this.innerObject.getData());
+		this.readAttributes(context, input);
+		this.readFields(this.getClass(), this.getObjectData());
 
 		return this;
 	}
@@ -106,41 +101,14 @@ public abstract class AMF3_Object extends AMF3_Type {
 						continue;
 					}
 
-					if (field.getType() == Object.class) {
-						Object value = null;
-
-						if (data instanceof Object) {
-							value = (Object) data;
-						}
-
-						this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
-						field.set(this, value);
-
-					} else if (field.getType() == Array.class) {
-						Array value = null;
-
-						if (data instanceof Array) {
-							value = (Array) data;
-
-						} else if (data instanceof Object) {
-							AMF3_Type external = ((Object) data).getExternalized();
-
-							if (external instanceof Array) {
-								value = (Array) external;
-							}
-						}
-
-						this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
-						field.set(this, value);
-
-					} else if (field.getType() == java.lang.String.class) {
+					if (field.getType() == java.lang.String.class) {
 						java.lang.String value = null;
 
 						if (data instanceof String) {
 							value = ((String) data).get();
 						}
 
-						this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
+						this.firePropertyChange(fieldName, fieldValue, value);
 						field.set(this, value);
 
 					} else if (field.getType() == int.class) {
@@ -150,7 +118,7 @@ public abstract class AMF3_Object extends AMF3_Type {
 							value = ((Integer) data).get();
 						}
 
-						this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
+						this.firePropertyChange(fieldName, fieldValue, value);
 						field.set(this, value);
 
 					} else if (field.getType() == java.lang.Integer.class) {
@@ -160,7 +128,7 @@ public abstract class AMF3_Object extends AMF3_Type {
 							value = ((Integer) data).get();
 						}
 
-						this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
+						this.firePropertyChange(fieldName, fieldValue, value);
 						field.set(this, value);
 
 					} else if (field.getType() == double.class) {
@@ -170,7 +138,7 @@ public abstract class AMF3_Object extends AMF3_Type {
 							value = ((Double) data).get();
 						}
 
-						this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
+						this.firePropertyChange(fieldName, fieldValue, value);
 						field.set(this, value);
 
 					} else if (field.getType() == java.lang.Double.class) {
@@ -180,7 +148,7 @@ public abstract class AMF3_Object extends AMF3_Type {
 							value = ((Double) data).get();
 						}
 
-						this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
+						this.firePropertyChange(fieldName, fieldValue, value);
 						field.set(this, value);
 
 					} else if (field.getType() == boolean.class) {
@@ -193,7 +161,7 @@ public abstract class AMF3_Object extends AMF3_Type {
 							value = false;
 						}
 
-						this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
+						this.firePropertyChange(fieldName, fieldValue, value);
 						field.set(this, value);
 
 					} else if (field.getType() == java.lang.Boolean.class) {
@@ -206,7 +174,7 @@ public abstract class AMF3_Object extends AMF3_Type {
 							value = false;
 						}
 
-						this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
+						this.firePropertyChange(fieldName, fieldValue, value);
 						field.set(this, value);
 
 					} else if (field.getType() == int[].class) {
@@ -216,7 +184,27 @@ public abstract class AMF3_Object extends AMF3_Type {
 							value = ((ByteArray) data).get();
 						}
 
-						this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
+						this.firePropertyChange(fieldName, fieldValue, value);
+						field.set(this, value);
+
+					} else if (field.getType() == ObjectProxy.class) {
+						ObjectProxy value = null;
+
+						if (data instanceof ObjectProxy) {
+							value = (ObjectProxy) data;
+						}
+
+						this.firePropertyChange(fieldName, fieldValue, value);
+						field.set(this, value);
+
+					} else if (field.getType() == ArrayCollection.class) {
+						ArrayCollection value = null;
+
+						if (data instanceof ArrayCollection) {
+							value = (ArrayCollection) data;
+						}
+
+						this.firePropertyChange(fieldName, fieldValue, value);
 						field.set(this, value);
 
 					} else if (AMF3_Type.class.isAssignableFrom(field.getType())) {
@@ -226,7 +214,7 @@ public abstract class AMF3_Object extends AMF3_Type {
 							value = data;
 						}
 
-						this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
+						this.firePropertyChange(fieldName, fieldValue, value);
 						field.set(this, value);
 
 					} else if (Collection.class.isAssignableFrom(field.getType())) {
@@ -235,48 +223,36 @@ public abstract class AMF3_Object extends AMF3_Type {
 						if (data instanceof Array) {
 							value = ((Array) data).values();
 
+						} else if (data instanceof ArrayCollection) {
+							value = ((ArrayCollection) data).getArray().values();
+
 						} else if (data instanceof Object) {
-							if (((Object) data).isExternalizable()) {
-								AMF3_Type external = ((Object) data).getExternalized();
+							value = ((Object) data).values();
 
-								if (external instanceof Array) {
-									value = ((Array) external).values();
-
-								} else if (external instanceof Object) {
-									value = ((Object) external).values();
-								}
-
-							} else {
-								value = ((Object) data).values();
-							}
+						} else if (data instanceof ObjectProxy) {
+							value = ((ObjectProxy) data).getObject().values();
 						}
 
-						this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
+						this.firePropertyChange(fieldName, fieldValue, value);
 						field.set(this, value);
 
 					} else if (Map.class.isAssignableFrom(field.getType())) {
 						Map<java.lang.String, AMF3_Type> value = null;
 
 						if (data instanceof Array) {
-							value = this.convertMap(((Array) data).getData());
+							value = this.convertMap(((Array) data).getArrayData());
+
+						} else if (data instanceof ArrayCollection) {
+							value = this.convertMap(((ArrayCollection) data).getArray().getArrayData());
 
 						} else if (data instanceof Object) {
-							if (((Object) data).isExternalizable()) {
-								AMF3_Type external = ((Object) data).getExternalized();
+							value = this.convertMap(((Object) data).getObjectData());
 
-								if (external instanceof Array) {
-									value = this.convertMap(((Array) external).getData());
-
-								} else if (external instanceof Object) {
-									value = this.convertMap(((Object) external).getData());
-								}
-
-							} else {
-								value = this.convertMap(((Object) data).getData());
-							}
+						} else if (data instanceof ObjectProxy) {
+							value = this.convertMap(((ObjectProxy) data).getObject().getObjectData());
 						}
 
-						this.propertyChangeSupport.firePropertyChange(fieldName, fieldValue, value);
+						this.firePropertyChange(fieldName, fieldValue, value);
 						field.set(this, value);
 
 					}
@@ -302,11 +278,23 @@ public abstract class AMF3_Object extends AMF3_Type {
 		return output;
 	}
 
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		this.propertyChangeSupport.addPropertyChangeListener(listener);
+	}
+
 	public void addPropertyChangeListener(java.lang.String propertyName, PropertyChangeListener listener) {
 		this.propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
 	}
 
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		this.propertyChangeSupport.removePropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(java.lang.String propertyName, PropertyChangeListener listener) {
+		this.propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
+	}
+
+	protected void firePropertyChange(java.lang.String propertyName, java.lang.Object oldValue, java.lang.Object newValue) {
+		this.propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
 	}
 }

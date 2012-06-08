@@ -6,6 +6,7 @@ import java.io.IOException;
 
 public interface AMF_Type {
 	public void write(AMF_Context context, DataOutputStream output) throws IOException;
+
 	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException;
 
 	@Override

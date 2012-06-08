@@ -26,7 +26,8 @@ public class AMF {
 	private final List<AMF_Header> headers = new Vector<AMF_Header>();
 	private final List<AMF_Message> messages = new Vector<AMF_Message>();
 
-	public AMF() { }
+	public AMF() {
+	}
 
 	public AMF(InputStream input) throws IOException {
 		this.read(input);
@@ -125,7 +126,11 @@ public class AMF {
 		return this.headers.hashCode() ^ this.messages.hashCode();
 	}
 
-	public static void registerObjectClass(String className, Class<? extends AMF3_Object> objectClass) {
-		Object.registerObjectClass(new UTF8(className), objectClass);
+	public static void registerClass(String className, Class<? extends AMF3_Object> classType) {
+		Object.registerClass(new UTF8(className), classType);
+	}
+
+	public static void registerClassMapping(String remoteName, String localName) {
+		Object.registerClassMapping(remoteName, localName);
 	}
 }

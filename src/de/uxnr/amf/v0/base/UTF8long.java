@@ -13,7 +13,8 @@ import de.uxnr.amf.v0.AMF0_Type;
 public class UTF8long extends AMF0_Type {
 	private String value = "";
 
-	public UTF8long() { }
+	public UTF8long() {
+	}
 
 	public UTF8long(String value) {
 		this.set(value);
@@ -45,7 +46,7 @@ public class UTF8long extends AMF0_Type {
 		U32 length = new U32(context, input);
 		byte[] buf = new byte[(int) length.get()]; // Problematic cast
 		if (input.read(buf) == length.get())
-			this.value = new String(buf);
+			this.value = new String(buf).intern();
 		else
 			throw new IOException("Not enough data to read UTF8");
 

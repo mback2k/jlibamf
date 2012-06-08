@@ -35,7 +35,7 @@ abstract public class AMF0_Type implements AMF_Type {
 		AMF0_Type value = null;
 
 		if (!AMF0_Type.types.containsKey(type)) {
-			throw new RuntimeException("Unsupported type "+type);
+			throw new RuntimeException("Unsupported type " + type);
 		}
 
 		try {

@@ -10,7 +10,8 @@ import de.uxnr.amf.v0.base.DOUBLE;
 import de.uxnr.amf.v0.base.S16;
 
 public class Date extends DOUBLE {
-	public Date() { }
+	public Date() {
+	}
 
 	public Date(java.util.Date value) {
 		this.set(value);

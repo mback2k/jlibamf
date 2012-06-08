@@ -25,7 +25,8 @@ import de.uxnr.amf.v0.base.UTF8long;
 public class XMLDocument extends UTF8long {
 	private Document value;
 
-	public XMLDocument() { }
+	public XMLDocument() {
+	}
 
 	public XMLDocument(Document value) throws TransformerException {
 		this.set(value);

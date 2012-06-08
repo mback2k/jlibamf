@@ -13,6 +13,7 @@ import java.util.Set;
 
 import de.uxnr.amf.AMF_Context;
 import de.uxnr.amf.AMF_Type;
+import de.uxnr.amf.v3.AMF3_Externalizable;
 import de.uxnr.amf.v3.AMF3_Object;
 import de.uxnr.amf.v3.AMF3_Trait;
 import de.uxnr.amf.v3.AMF3_Type;
@@ -20,32 +21,101 @@ import de.uxnr.amf.v3.base.U29;
 import de.uxnr.amf.v3.base.UTF8;
 
 public class Object extends AMF3_Type {
-	private static final Map<UTF8, Class<? extends AMF3_Object>> objectClasses = new HashMap<UTF8, Class<? extends AMF3_Object>>();
-	private static final Map<UTF8, Class<? extends AMF3_Type>> internalClasses = new HashMap<UTF8, Class<? extends AMF3_Type>>();
-	private static final Map<UTF8, Class<? extends AMF3_Type>> externalClasses = new HashMap<UTF8, Class<? extends AMF3_Type>>();
+	private static final Map<UTF8, Class<? extends AMF3_Object>> classes = new HashMap<UTF8, Class<? extends AMF3_Object>>();
+	private static final Map<java.lang.String, java.lang.String> mappings = new HashMap<java.lang.String, java.lang.String>();
 
 	private static final UTF8 EMPTY_KEY = new UTF8();
 
 	private final Map<UTF8, AMF3_Type> value = new LinkedHashMap<UTF8, AMF3_Type>();
 
 	private AMF3_Trait trait = null;
-	private AMF3_Type external = null;
 
 	private java.lang.Integer hashCode = null;
 
-	public Object() { }
-
-	public Object(AMF3_Type external) {
-		this.external = external;
+	public Object() {
 	}
 
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
+		if (this.writeTrait(context, output)) {
+			this.writeAttributes(context, output);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
+		AMF3_Type type = this.readTrait(context, input);
+
+		if (type == this) {
+			UTF8 className = this.trait.getClassName();
+			boolean isExternalizable = this.trait.isExternalizable();
+
+			Class<? extends AMF3_Object> classType = null;
+
+			// Search for a custom class
+			if (Object.classes.containsKey(className)) {
+				classType = Object.classes.get(className);
+
+			} else {
+				for (Entry<java.lang.String, java.lang.String> entry : Object.mappings.entrySet()) {
+					java.lang.String searchName = className.get().replace(entry.getKey(), entry.getValue());
+
+					try {
+						classType = (Class<? extends AMF3_Object>) Thread.currentThread().getContextClassLoader().loadClass(searchName);
+						Object.registerClass(className, classType);
+						break;
+					} catch (ClassNotFoundException e) {
+						continue;
+					}
+				}
+			}
+
+			// Create new instance of custom class
+			if (classType != null) {
+				try {
+					Object object = classType.newInstance();
+					object.trait = this.trait;
+					type = object;
+				} catch (Exception e) {
+					throw new IOException(e);
+				}
+			}
+
+			// Externalizable class not found
+			if (type == this && isExternalizable) {
+				throw new RuntimeException("Unknown externalizable class " + className);
+			}
+
+			context.addAMF3Object(type);
+
+			if (isExternalizable) {
+				if (type instanceof AMF3_Externalizable) {
+					((AMF3_Externalizable) type).readExternal(context, input);
+
+				} else {
+					throw new RuntimeException("Class " + className + " is not externalizable");
+				}
+
+			} else if (type instanceof AMF3_Object) {
+				((AMF3_Object) type).read(context, input);
+
+			} else {
+				((Object) type).readAttributes(context, input);
+			}
+
+			this.hashCode = null;
+		}
+
+		return type;
+	}
+
+	public final boolean writeTrait(AMF_Context context, DataOutputStream output) throws IOException {
 		int reference = context.getAMF3ObjectReference(this);
 		if (reference >= 0) {
 			U29 flag = new U29((reference << 1) & ~1);
 			flag.write(context, output);
-			return;
+			return false;
 		}
 
 		context.addAMF3Object(this);
@@ -53,9 +123,9 @@ public class Object extends AMF3_Type {
 		UTF8 className = this.trait.getClassName();
 		List<UTF8> names = this.trait.getNames();
 
-		reference = context.getAMF3TraitReference(this.trait);
-		if (reference >= 0) {
-			U29 flag = new U29((reference << 2) & ~2 | 1);
+		int traitref = context.getAMF3TraitReference(this.trait);
+		if (traitref >= 0) {
+			U29 flag = new U29((traitref << 2) & ~2 | 1);
 			flag.write(context, output);
 
 		} else {
@@ -74,36 +144,10 @@ public class Object extends AMF3_Type {
 			context.addAMF3Trait(this.trait);
 		}
 
-		if (this.trait.isExternalizable()) {
-			if (Object.externalClasses.containsKey(className)) {
-				this.external.write(context, output);
-
-			} else if (Object.internalClasses.containsKey(className)) {
-				AMF3_Type.writeType(context, output, this.external);
-
-			} else {
-				throw new RuntimeException("Unsupported message/class "+className);
-			}
-		} else {
-			for (UTF8 name : names) {
-				AMF3_Type.writeType(context, output, this.value.get(name));
-			}
-
-			if (this.trait.isDynamic()) {
-				for (Entry<UTF8, AMF3_Type> entry : this.value.entrySet()) {
-					if (!names.contains(entry.getKey())) {
-						entry.getKey().write(context, output);
-						AMF3_Type.writeType(context, output, entry.getValue());
-					}
-				}
-
-				Object.EMPTY_KEY.write(context, output);
-			}
-		}
+		return true;
 	}
 
-	@Override
-	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
+	public final AMF3_Type readTrait(AMF_Context context, DataInputStream input) throws IOException {
 		U29 flag = new U29(context, input);
 		int flags = flag.get();
 
@@ -113,14 +157,12 @@ public class Object extends AMF3_Type {
 		if ((flags & 2) == 0)
 			this.trait = context.getAMF3Trait(flags >> 2);
 
-		UTF8 className = new UTF8();
-
 		if (this.trait == null) {
 			this.trait = new AMF3_Trait();
 			this.trait.setExternalizable((flags & 4) == 4);
 			this.trait.setDynamic((flags & 8) == 8);
 
-			className = (UTF8) className.read(context, input);
+			UTF8 className = (UTF8) new UTF8().read(context, input);
 			this.trait.setClassName(className);
 
 			int count = flags >> 4;
@@ -131,75 +173,54 @@ public class Object extends AMF3_Type {
 			}
 
 			context.addAMF3Trait(this.trait);
-
-		} else {
-			className = this.trait.getClassName();
-		}
-
-		context.addAMF3Object(this);
-
-		if (this.trait.isExternalizable()) {
-			if (Object.externalClasses.containsKey(className)) {
-				try {
-					this.external = Object.externalClasses.get(className).newInstance();
-					this.external = (AMF3_Type) this.external.read(context, input);
-				} catch (Exception e) {
-					throw new IOException(e);
-				}
-
-			} else if (Object.internalClasses.containsKey(className)) {
-				this.external = AMF3_Type.readType(context, input);
-
-			} else {
-				throw new RuntimeException("Unsupported message/class "+className);
-			}
-
-			this.hashCode = null;
-
-			return this;
-		} else {
-			for (UTF8 name : this.trait.getNames()) {
-				AMF3_Type value = AMF3_Type.readType(context, input);
-
-				this.value.put(name, value);
-			}
-
-			if (this.trait.isDynamic()) {
-				UTF8 key = null;
-				AMF3_Type value = null;
-				do {
-					key = new UTF8();
-					key = (UTF8) key.read(context, input);
-
-					if (key.equals(Object.EMPTY_KEY)) {
-						break;
-					} else {
-						value = AMF3_Type.readType(context, input);
-
-						this.value.put(key, value);
-					}
-				} while (key != null && value != null);
-			}
-		}
-
-		this.hashCode = null;
-
-		if (Object.objectClasses.containsKey(className)) {
-			AMF3_Object object;
-			try {
-				object = Object.objectClasses.get(className).newInstance();
-				object.setInnerObject(this);
-				object.read(context, input);
-			} catch (Exception e) {
-				throw new IOException(e);
-			}
-			return object;
 		}
 
 		return this;
 	}
 
-	public Map<UTF8, AMF3_Type> getData() {
+	protected final void writeAttributes(AMF_Context context, DataOutputStream output) throws IOException {
+		for (UTF8 name : this.trait.getNames()) {
+			AMF3_Type.writeType(context, output, this.value.get(name));
+		}
+
+		if (this.trait.isDynamic()) {
+			for (Entry<UTF8, AMF3_Type> entry : this.value.entrySet()) {
+				if (!this.trait.hasName(entry.getKey())) {
+					entry.getKey().write(context, output);
+					AMF3_Type.writeType(context, output, entry.getValue());
+				}
+			}
+
+			Object.EMPTY_KEY.write(context, output);
+		}
+	}
+
+	protected final void readAttributes(AMF_Context context, DataInputStream input) throws IOException {
+		for (UTF8 name : this.trait.getNames()) {
+			AMF3_Type value = AMF3_Type.readType(context, input);
+
+			this.value.put(name, value);
+		}
+
+		if (this.trait.isDynamic()) {
+			UTF8 key = null;
+			AMF3_Type value = null;
+			do {
+				key = new UTF8();
+				key = (UTF8) key.read(context, input);
+
+				if (key.equals(Object.EMPTY_KEY)) {
+					break;
+				} else {
+					value = AMF3_Type.readType(context, input);
+
+					this.value.put(key, value);
+				}
+			} while (key != null && value != null);
+		}
+	}
+
+	public Map<UTF8, AMF3_Type> getObjectData() {
 		return this.value;
 	}
 
@@ -259,31 +280,19 @@ public class Object extends AMF3_Type {
 		return this.trait.isExternalizable();
 	}
 
-	public AMF3_Type getExternalized() {
-		return this.external;
-	}
-
 	@Override
 	public java.lang.String toString() {
 		StringBuilder sb = new StringBuilder();
-		if (this.external != null) {
-			sb.append("External '");
-			sb.append(this.getClassName());
-			sb.append("' (\n");
-			sb.append(this.external);
-			sb.append(")");
-		} else {
-			sb.append("Object '");
-			sb.append(this.getClassName());
-			sb.append("' {\n");
-			for (Entry<UTF8, AMF3_Type> entry : this.value.entrySet()) {
-				sb.append(entry.getKey());
-				sb.append(": ");
-				sb.append(entry.getValue());
-				sb.append(",\n");
-			}
-			sb.append("}");
+		sb.append("Object '");
+		sb.append(this.getClassName());
+		sb.append("' {\n");
+		for (Entry<UTF8, AMF3_Type> entry : this.value.entrySet()) {
+			sb.append(entry.getKey());
+			sb.append(": ");
+			sb.append(entry.getValue());
+			sb.append(",\n");
 		}
+		sb.append("}");
 		return sb.toString();
 	}
 
@@ -294,20 +303,14 @@ public class Object extends AMF3_Type {
 		int hashCode = this.value.hashCode();
 		if (this.trait != null)
 			hashCode ^= this.trait.hashCode();
-		if (this.external != null)
-			hashCode ^= this.external.hashCode();
 		return this.hashCode = hashCode;
 	}
 
-	public static void registerObjectClass(UTF8 className, Class<? extends AMF3_Object> objectClass) {
-		Object.objectClasses.put(className, objectClass);
+	public static void registerClass(UTF8 className, Class<? extends AMF3_Object> classType) {
+		Object.classes.put(className, classType);
 	}
 
-	public static void registerInternalClass(UTF8 className, Class<? extends AMF3_Type> internalClass) {
-		Object.internalClasses.put(className, internalClass);
-	}
-
-	public static void registerExternalClass(UTF8 className, Class<? extends AMF3_Type> externalClass) {
-		Object.externalClasses.put(className, externalClass);
+	public static void registerClassMapping(java.lang.String remoteName, java.lang.String localName) {
+		Object.mappings.put(remoteName, localName);
 	}
 }

@@ -11,7 +11,8 @@ import de.uxnr.amf.v0.AMF0_Type;
 public class DOUBLE extends AMF0_Type {
 	private Double value = new Double(0);
 
-	public DOUBLE() { }
+	public DOUBLE() {
+	}
 
 	public DOUBLE(double value) {
 		this.set(value);

@@ -68,8 +68,22 @@ public abstract class AbstractMessage extends AbstractMessageBase {
 	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
 		super.read(context, input);
 
-		this.readFields(AbstractMessage.class, this.getData());
+		this.readFields(AbstractMessage.class, this.getObjectData());
 
 		return this;
+	}
+
+	@Override
+	public void writeExternal(AMF_Context context, DataOutputStream output) throws IOException {
+		// TODO Write object fields
+
+		super.writeExternal(context, output);
+	}
+
+	@Override
+	public void readExternal(AMF_Context context, DataInputStream input) throws IOException {
+		super.readExternal(context, input);
+
+		this.readFields(AbstractMessage.class, this.getObjectData());
 	}
 }

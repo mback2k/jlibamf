@@ -11,7 +11,8 @@ import de.uxnr.amf.v0.AMF0_Type;
 public class U8 extends AMF0_Type {
 	private int value = 0;
 
-	public U8() { }
+	public U8() {
+	}
 
 	public U8(int value) {
 		this.set(value);
