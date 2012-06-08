@@ -65,7 +65,7 @@ public abstract class AMF3_Object extends Object {
 					AMF3_Type data = null;
 
 					if (fieldValue == null) {
-						
+						data = new Null();
 					} else if (fieldValue instanceof java.lang.String) {
 						data = new String((java.lang.String) fieldValue);
 					} else if (fieldValue instanceof java.lang.Integer) {
