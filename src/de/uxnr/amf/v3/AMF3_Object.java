@@ -46,7 +46,6 @@ public abstract class AMF3_Object extends Object {
 		return this;
 	}
 
-	@SuppressWarnings("unused")
 	protected final void writeFields(Class type, Map<UTF8, AMF3_Type> fields) throws IOException {
 		try {
 			for (Field field : type.getDeclaredFields()) {
@@ -62,7 +61,39 @@ public abstract class AMF3_Object extends Object {
 				java.lang.Object fieldValue = field.get(this);
 
 				try {
-					// TODO Implement writeFields
+					UTF8 name = new UTF8(fieldName);
+					AMF3_Type data = null;
+
+					if (fieldValue == null) {
+						
+					} else if (fieldValue instanceof java.lang.String) {
+						data = new String((java.lang.String) fieldValue);
+					} else if (fieldValue instanceof java.lang.Integer) {
+						data = new Integer((java.lang.Integer) fieldValue);
+					} else if (fieldValue instanceof java.lang.Double) {
+						data = new Double((java.lang.Double) fieldValue);
+					} else if (fieldValue instanceof java.lang.Float) {
+						data = new Double((java.lang.Float) fieldValue);
+					} else if (fieldValue instanceof java.lang.Boolean) {
+						boolean value = (java.lang.Boolean) fieldValue;
+						if (value) {
+							data = new True();
+						} else {
+							data = new False();
+						}
+					} else if (fieldValue instanceof int[]) {
+						data = new ByteArray((int[]) fieldValue);
+					} else if (fieldValue instanceof ObjectProxy) {
+						data = (ObjectProxy) fieldValue;
+					} else if (fieldValue instanceof ArrayCollection) {
+						data = (ArrayCollection) fieldValue;
+					} else if (fieldValue instanceof AMF3_Type) {
+						data = (AMF3_Type) fieldValue;
+					}
+
+					if (data != null) {
+						fields.put(name, data);
+					}
 
 				} catch (ClassCastException e) {
 					continue;
