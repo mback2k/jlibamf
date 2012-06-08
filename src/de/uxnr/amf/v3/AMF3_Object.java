@@ -34,8 +34,7 @@ public abstract class AMF3_Object extends Object {
 
 	@Override
 	public void write(AMF_Context context, DataOutputStream output) throws IOException {
-		// TODO Write object fields
-
+		this.writeFields(this.getClass(), this.getObjectData());
 		this.writeAttributes(context, output);
 	}
 
@@ -45,6 +44,68 @@ public abstract class AMF3_Object extends Object {
 		this.readFields(this.getClass(), this.getObjectData());
 
 		return this;
+	}
+
+	protected final void writeFields(Class type, Map<UTF8, AMF3_Type> fields) throws IOException {
+		try {
+			for (Field field : type.getDeclaredFields()) {
+				int modifiers = field.getModifiers();
+				if ((modifiers & (Modifier.STATIC | Modifier.TRANSIENT)) != 0)
+					continue;
+
+				Field modifiersField = Field.class.getDeclaredField("modifiers");
+				modifiersField.setAccessible(true);
+				modifiersField.setInt(field, (modifiers & ~Modifier.PRIVATE & ~Modifier.PROTECTED) | Modifier.PUBLIC);
+
+				java.lang.String fieldName = field.getName();
+				java.lang.Object fieldValue = field.get(this);
+
+				try {
+					UTF8 name = new UTF8(fieldName);
+					AMF3_Type data = null;
+
+					if (fieldValue == null) {
+						
+					} else if (fieldValue instanceof java.lang.String) {
+						data = new String((java.lang.String) fieldValue);
+					} else if (fieldValue instanceof java.lang.Integer) {
+						data = new Integer((java.lang.Integer) fieldValue);
+					} else if (fieldValue instanceof java.lang.Double) {
+						data = new Double((java.lang.Double) fieldValue);
+					} else if (fieldValue instanceof java.lang.Float) {
+						data = new Double((java.lang.Float) fieldValue);
+					} else if (fieldValue instanceof java.lang.Boolean) {
+						boolean value = (java.lang.Boolean) fieldValue;
+						if (value) {
+							data = new True();
+						} else {
+							data = new False();
+						}
+					} else if (fieldValue instanceof int[]) {
+						data = new ByteArray((int[]) fieldValue);
+					} else if (fieldValue instanceof ObjectProxy) {
+						data = (ObjectProxy) fieldValue;
+					} else if (fieldValue instanceof ArrayCollection) {
+						data = (ArrayCollection) fieldValue;
+					} else if (fieldValue instanceof AMF3_Type) {
+						data = (AMF3_Type) fieldValue;
+					}
+
+					if (data != null) {
+						fields.put(name, data);
+					}
+
+				} catch (ClassCastException e) {
+					continue;
+
+				} finally {
+					modifiersField.setInt(field, modifiers);
+					modifiersField.setAccessible(false);
+				}
+			}
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
 	}
 
 	protected final void readFields(Class type, Map<UTF8, AMF3_Type> fields) throws IOException {
