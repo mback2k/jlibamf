@@ -7,14 +7,13 @@ import de.uxnr.amf.AMF_Context;
 import de.uxnr.amf.v3.base.UTF8;
 
 public class String extends UTF8 {
-	public String() {
-	}
+  public String() {}
 
-	public String(java.lang.String value) {
-		this.set(value);
-	}
+  public String(java.lang.String value) {
+    this.set(value);
+  }
 
-	public String(AMF_Context context, DataInputStream input) throws IOException {
-		this.read(context, input);
-	}
+  public String(AMF_Context context, DataInputStream input) throws IOException {
+    this.read(context, input);
+  }
 }

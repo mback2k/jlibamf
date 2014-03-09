@@ -9,39 +9,39 @@ import de.uxnr.amf.AMF_Type;
 import de.uxnr.amf.flex.base.CommandMessageBase;
 
 public class CommandMessage extends CommandMessageBase {
-	private int operation;
+  private int operation;
 
-	public int getOperation() {
-		return this.operation;
-	}
+  public int getOperation() {
+    return this.operation;
+  }
 
-	@Override
-	public void write(AMF_Context context, DataOutputStream output) throws IOException {
-		// TODO Write object fields
+  @Override
+  public void write(AMF_Context context, DataOutputStream output) throws IOException {
+    // TODO Write object fields
 
-		super.write(context, output);
-	}
+    super.write(context, output);
+  }
 
-	@Override
-	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
-		super.read(context, input);
+  @Override
+  public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
+    super.read(context, input);
 
-		this.readFields(CommandMessage.class, this.getObjectData());
+    this.readFields(CommandMessage.class, this.getObjectData());
 
-		return this;
-	}
+    return this;
+  }
 
-	@Override
-	public void writeExternal(AMF_Context context, DataOutputStream output) throws IOException {
-		// TODO Write object fields
+  @Override
+  public void writeExternal(AMF_Context context, DataOutputStream output) throws IOException {
+    // TODO Write object fields
 
-		super.writeExternal(context, output);
-	}
+    super.writeExternal(context, output);
+  }
 
-	@Override
-	public void readExternal(AMF_Context context, DataInputStream input) throws IOException {
-		super.readExternal(context, input);
+  @Override
+  public void readExternal(AMF_Context context, DataInputStream input) throws IOException {
+    super.readExternal(context, input);
 
-		this.readFields(CommandMessage.class, this.getObjectData());
-	}
+    this.readFields(CommandMessage.class, this.getObjectData());
+  }
 }

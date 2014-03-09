@@ -15,68 +15,68 @@ import de.uxnr.amf.v3.base.U29;
 import de.uxnr.amf.v3.type.Integer;
 
 public class AMFTest {
-	public static void main(String[] args) throws IOException {
-		for (int i = 0; i < 1000; i++) {
-			int value = (int) (Integer.MAX_VALUE - (Math.random() * Integer.MAX_VALUE * 2));
-			test(value, true);
-		}
+  public static void main(String[] args) throws IOException {
+    for (int i = 0; i < 1000; i++) {
+      int value = (int) (Integer.MAX_VALUE - (Math.random() * Integer.MAX_VALUE * 2));
+      test(value, true);
+    }
 
-		for (int i = 0; i < 1000; i++) {
-			int value = (int) (Math.random() * U29.MAX_VALUE);
-			test(value, false);
-		}
+    for (int i = 0; i < 1000; i++) {
+      int value = (int) (Math.random() * U29.MAX_VALUE);
+      test(value, false);
+    }
 
-		File folder = new File(".");
-		for (File file : folder.listFiles()) {
-			if (file.getName().endsWith(".amf")) {
-				test(file);
-			}
-		}
-	}
+    File folder = new File(".");
+    for (File file : folder.listFiles()) {
+      if (file.getName().endsWith(".amf")) {
+        test(file);
+      }
+    }
+  }
 
-	public static void test(int value, boolean signed) throws IOException {
-		AMF_Context context = new AMF_Context();
-		Integer test = new Integer();
-		test.signed = signed;
+  public static void test(int value, boolean signed) throws IOException {
+    AMF_Context context = new AMF_Context();
+    Integer test = new Integer();
+    test.signed = signed;
 
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-		test.set(value);
-		test.write(context, new DataOutputStream(out));
+    test.set(value);
+    test.write(context, new DataOutputStream(out));
 
-		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+    ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 
-		test.read(context, new DataInputStream(in));
+    test.read(context, new DataInputStream(in));
 
-		if (value != test.get())
-			throw new RuntimeException("Test failed!");
-	}
+    if (value != test.get())
+      throw new RuntimeException("Test failed!");
+  }
 
-	public static void test(File file) throws IOException {
-		FileInputStream input = new FileInputStream(file);
+  public static void test(File file) throws IOException {
+    FileInputStream input = new FileInputStream(file);
 
-		AMF amf = new AMF(input);
-		int hashCode = amf.hashCode();
-		String toString = amf.toString();
+    AMF amf = new AMF(input);
+    int hashCode = amf.hashCode();
+    String toString = amf.toString();
 
-		if (input.available() != 0)
-			throw new RuntimeException("Test failed!");
+    if (input.available() != 0)
+      throw new RuntimeException("Test failed!");
 
-		file = File.createTempFile("amf", file.getName());
-		FileOutputStream out = new FileOutputStream(file);
+    file = File.createTempFile("amf", file.getName());
+    FileOutputStream out = new FileOutputStream(file);
 
-		amf.write(out);
+    amf.write(out);
 
-		out.close();
+    out.close();
 
-		FileInputStream in = new FileInputStream(file);
+    FileInputStream in = new FileInputStream(file);
 
-		amf = new AMF(in);
+    amf = new AMF(in);
 
-		if (hashCode != amf.hashCode())
-			throw new RuntimeException("Test failed!");
+    if (hashCode != amf.hashCode())
+      throw new RuntimeException("Test failed!");
 
-		if (toString.hashCode() != amf.toString().hashCode())
-			throw new RuntimeException("Test failed!");
-	}
+    if (toString.hashCode() != amf.toString().hashCode())
+      throw new RuntimeException("Test failed!");
+  }
 }

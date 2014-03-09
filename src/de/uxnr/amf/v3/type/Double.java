@@ -7,14 +7,13 @@ import de.uxnr.amf.AMF_Context;
 import de.uxnr.amf.v3.base.DOUBLE;
 
 public class Double extends DOUBLE {
-	public Double() {
-	}
+  public Double() {}
 
-	public Double(double value) {
-		this.set(value);
-	}
+  public Double(double value) {
+    this.set(value);
+  }
 
-	public Double(AMF_Context context, DataInputStream input) throws IOException {
-		this.read(context, input);
-	}
+  public Double(AMF_Context context, DataInputStream input) throws IOException {
+    this.read(context, input);
+  }
 }

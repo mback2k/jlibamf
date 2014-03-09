@@ -9,19 +9,19 @@ import de.uxnr.amf.AMF_Type;
 import de.uxnr.amf.v3.AMF3_Type;
 
 public abstract class EmptyType extends AMF3_Type {
-	@Override
-	public void write(AMF_Context context, DataOutputStream output) throws IOException {
-		// Nothing to do here
-	}
+  @Override
+  public void write(AMF_Context context, DataOutputStream output) throws IOException {
+    // Nothing to do here
+  }
 
-	@Override
-	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
-		// Nothing to do here
-		return this;
-	}
+  @Override
+  public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
+    // Nothing to do here
+    return this;
+  }
 
-	@Override
-	public int hashCode() {
-		return this.getClass().hashCode();
-	}
+  @Override
+  public int hashCode() {
+    return this.getClass().hashCode();
+  }
 }

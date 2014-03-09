@@ -23,73 +23,72 @@ import de.uxnr.amf.AMF_Type;
 import de.uxnr.amf.v0.base.UTF8long;
 
 public class XMLDocument extends UTF8long {
-	private Document value;
+  private Document value;
 
-	public XMLDocument() {
-	}
+  public XMLDocument() {}
 
-	public XMLDocument(Document value) throws TransformerException {
-		this.set(value);
-	}
+  public XMLDocument(Document value) throws TransformerException {
+    this.set(value);
+  }
 
-	public XMLDocument(AMF_Context context, DataInputStream input) throws IOException {
-		this.read(context, input);
-	}
+  public XMLDocument(AMF_Context context, DataInputStream input) throws IOException {
+    this.read(context, input);
+  }
 
-	@Override
-	public void write(AMF_Context context, DataOutputStream output) throws IOException {
-		try {
-			StringWriter writer = new StringWriter();
-			StreamResult result = new StreamResult(writer);
-			DOMSource source = new DOMSource(this.value);
+  @Override
+  public void write(AMF_Context context, DataOutputStream output) throws IOException {
+    try {
+      StringWriter writer = new StringWriter();
+      StreamResult result = new StreamResult(writer);
+      DOMSource source = new DOMSource(this.value);
 
-			TransformerFactory factory = TransformerFactory.newInstance();
-			Transformer trans = factory.newTransformer();
+      TransformerFactory factory = TransformerFactory.newInstance();
+      Transformer trans = factory.newTransformer();
 
-			trans.transform(source, result);
-			this.set(writer.toString());
-		} catch (TransformerException e) {
-			throw new IOException(e);
-		}
+      trans.transform(source, result);
+      this.set(writer.toString());
+    } catch (TransformerException e) {
+      throw new IOException(e);
+    }
 
-		super.write(context, output);
-	}
+    super.write(context, output);
+  }
 
-	@Override
-	public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
-		super.read(context, input);
+  @Override
+  public AMF_Type read(AMF_Context context, DataInputStream input) throws IOException {
+    super.read(context, input);
 
-		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			factory.setNamespaceAware(true);
-			DocumentBuilder builder = factory.newDocumentBuilder();
+    try {
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      factory.setNamespaceAware(true);
+      DocumentBuilder builder = factory.newDocumentBuilder();
 
-			ByteArrayInputStream stream = new ByteArrayInputStream(this.get().getBytes());
-			this.value = builder.parse(stream);
+      ByteArrayInputStream stream = new ByteArrayInputStream(this.get().getBytes());
+      this.value = builder.parse(stream);
 
-			return this;
-		} catch (SAXException e) {
-			throw new IOException(e);
-		} catch (ParserConfigurationException e) {
-			throw new IOException(e);
-		}
-	}
+      return this;
+    } catch (SAXException e) {
+      throw new IOException(e);
+    } catch (ParserConfigurationException e) {
+      throw new IOException(e);
+    }
+  }
 
-	public void set(Document value) {
-		this.value = value;
-	}
+  public void set(Document value) {
+    this.value = value;
+  }
 
-	public Document getDocument() {
-		return this.value;
-	}
+  public Document getDocument() {
+    return this.value;
+  }
 
-	@Override
-	public java.lang.String toString() {
-		return "XML Document";
-	}
+  @Override
+  public java.lang.String toString() {
+    return "XML Document";
+  }
 
-	@Override
-	public int hashCode() {
-		return this.value.hashCode();
-	}
+  @Override
+  public int hashCode() {
+    return this.value.hashCode();
+  }
 }
